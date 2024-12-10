@@ -49,7 +49,7 @@ public class MenuOpenner {
 
 
 		/*
-		 适配1.8版本的付服务器
+		 适配1.8版本的服务器
 		 2024/6/29
 		 */
 		ListIterator<ItemStack> iterator = MenuManager.getMenu(menuname).iterator();
@@ -64,34 +64,54 @@ public class MenuOpenner {
 		kitlist.forEach(kitName->{
 			Kit kit = Kit.getKit(kitName);
 			if(kit != null && kit.getDocron() != null) {
-				Calendar cnow = Calendar.getInstance();//玩家当前时间
-				Calendar c_player = Calendar.getInstance();//玩家当前时间
-				// 判断是否执行
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+				// 获取玩家当前时间和上次领取时间
+				String lastTimeStr = WkKit.getPlayerData().getKitData(playername, kitName);
+				Calendar cnow = Calendar.getInstance();
+				
 				try {
-					if(WkKit.getPlayerData().contain_Kit(playername, kitName)){
-						c_player.setTime(sdf.parse(WkKit.getPlayerData().getKitData(playername,kitName)));
+					// 如果状态为true，说明已经可以领取，不需要进行时间判断
+					if("true".equalsIgnoreCase(lastTimeStr)) {
+						return;
 					}
-				} catch (ParseException ignored) {}
-
-				if (cnow.getTimeInMillis() >= c_player.getTimeInMillis()) {
-					// 判断是否为首次不刷新礼包
-					if (kit.isNoRefreshFirst()) kit.setNoRefreshFirst(false);
-					// 有礼包数据的就刷新领取状态
-					if (WkKit.getPlayerData().contain_Kit(playername, kitName)) {
-						// 异步中同步回调
-						Bukkit.getScheduler().callSyncMethod(WkKit.getWkKit(), () -> {
-							PlayersKitRefreshEvent.callEvent(p, kit); // 回调
-							return true;
-						});
-						if (WkKit.getPlayerData() instanceof PlayerData_MySQL) { // 判断是否是数据库模式，如果是则使用锁模式。
-							((PlayerData_MySQL) WkKit.getPlayerData()).setKitDataOfLock(playername, kitName, "true");
-						} else WkKit.getPlayerData().setKitData(playername, kitName, "true");
-						MessageManager.infoDeBug("已刷新礼包：" + kitName);
+					
+					if(lastTimeStr != null) {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+						
+						Calendar lastTime = Calendar.getInstance();
+						lastTime.setTime(sdf.parse(lastTimeStr));
+						
+						// 如果现在时间已经超过了记录的时间
+						if(cnow.after(lastTime)) {
+							// 判断是否为首次不刷新礼包
+							if(kit.isNoRefreshFirst()) {
+								kit.setNoRefreshFirst(false);
+								return; // 跳过首次刷新
+							}
+							
+							// 异步中同步回调
+							Bukkit.getScheduler().callSyncMethod(WkKit.getWkKit(), () -> {
+								PlayersKitRefreshEvent.callEvent(p, kit); // 回调
+								return true;
+							});
+							
+							// 更新礼包状态
+							if(WkKit.getPlayerData() instanceof PlayerData_MySQL) {
+								((PlayerData_MySQL) WkKit.getPlayerData()).setKitDataOfLock(playername, kitName, "true");
+							} else {
+								WkKit.getPlayerData().setKitData(playername, kitName, "true");
+							}
+							
+							MessageManager.infoDeBug("已刷新礼包：" + kitName);
+						}
+					} else {
+						// 如果没有记录时间，且不是首次不刷新，则设置为可领取
+						if(!kit.isNoRefreshFirst()) {
+							WkKit.getPlayerData().setKitData(playername, kitName, "true");
+						}
 					}
-					// 重新计算礼包的下次刷新时间
-					kit.restNextRC();
+				} catch(ParseException e) {
+					MessageManager.infoDeBug("解析时间出错：" + kitName);
+					e.printStackTrace();
 				}
 			}
 		});
@@ -114,7 +134,7 @@ public class MenuOpenner {
 							|| WkKit.getPlayerData().getKitTime(playername, kitname) != null && WkKit.getPlayerData().getKitTime(playername, kitname) == 0) {
 						for(int num : WKTool.getSlotNum(menuname + ".Slots.Get.slot")) {
 							ItemStack item = new ItemStack(Material.BARRIER);
-							// 设置自定义图标
+							// 设置���定义图标
 							if(MenuConfigLoader.contains(menuname + ".Slots." + kitname + ".offid")) {
 								item = new ItemStack(Material.getMaterial(MenuConfigLoader.getString(menuname + ".Slots." + kitname + ".offid")));
 							}

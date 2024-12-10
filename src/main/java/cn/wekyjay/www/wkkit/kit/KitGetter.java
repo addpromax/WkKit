@@ -8,13 +8,16 @@ import cn.wekyjay.www.wkkit.hook.MythicMobsHooker;
 import cn.wekyjay.www.wkkit.hook.VaultHooker;
 import cn.wekyjay.www.wkkit.tool.MessageManager;
 import cn.wekyjay.www.wkkit.tool.WKTool;
+import cn.wekyjay.www.wkkit.tool.CronManager;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 /**
@@ -26,24 +29,57 @@ public class KitGetter{
 	/**
 	 * 领取礼包
 	 */
-	public void getKit(Kit kit,Player p, String menuname) {
+	public boolean getKit(Kit kit,Player p, String menuname) {
 		// 回调事件
 		PlayersReceiveKitEvent event = new PlayersReceiveKitEvent(p, kit, menuname, ReceiveType.GET);
 		if (menuname != null) event = new PlayersReceiveKitEvent(p, kit, menuname, ReceiveType.MENU);
 		Bukkit.getPluginManager().callEvent(event);
-		if (event.isCancelled())return;
-		// 条件检查
-		if(kit.isNoRefreshFirst()) {if(!this.runNoRefreshFirst(kit, p)) {return;}}
-		if(kit.getPermission() != null) {if(!this.runPermission(kit, p)) {return;}}
-		if(kit.getItemStacks() != null) {if(!this.runItem(kit, p)) {return;}}
-		if(kit.getTimes() != null) {if(!this.runTimes(kit, p)) {return;}}
-		if(kit.getVault() != null) {if(!this.runVault(kit,p)){return;}}
+		if (event.isCancelled())return false;
+
+		String kitname = kit.getKitname();
+		String lastTimeStr = WkKit.getPlayerData().getKitData(p.getName(), kitname);
+
+		// 检查是否可以领取
+		if(lastTimeStr != null) {
+			// 如果状态为true，直接允许领取
+			if("true".equalsIgnoreCase(lastTimeStr)) {
+				// 继续执行领取逻辑
+			} else {
+				try {
+					// 解析时间字符串
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+					Calendar lastTime = Calendar.getInstance();
+					lastTime.setTime(sdf.parse(lastTimeStr));
+					Calendar now = Calendar.getInstance();
+					
+					// 如果还未到领取时间
+					if(now.before(lastTime)) {
+						p.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GET_CANTGET", ChatColor.RED) + 
+							" " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(lastTime.getTime()));
+						return false;
+					}
+				} catch(ParseException e) {
+					MessageManager.infoDeBug("解析时间出错：" + kitname);
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}
+
+		// 其他条件检查
+		if(kit.isNoRefreshFirst()) {if(!this.runNoRefreshFirst(kit, p)) {return false;}}
+		if(kit.getPermission() != null) {if(!this.runPermission(kit, p)) {return false;}}
+		if(kit.getItemStacks() != null) {if(!this.runItem(kit, p)) {return false;}}
+		if(kit.getTimes() != null) {if(!this.runTimes(kit, p)) {return false;}}
+		if(kit.getVault() != null) {if(!this.runVault(kit,p)){return false;}}
+
 		// 以下代码可以安全执行
 		if(kit.getCommands() != null) {this.runCommands(kit, p);}
 		if(kit.getMythicMobs() != null) {this.runMythicMobs(kit,p);}
 		this.getSuccess(kit, p);
+		return true;
 	}
-	
+
 	//******************************命 令 行*********************************//
 	/**
 	 * 运行指令
@@ -132,7 +168,7 @@ public class KitGetter{
 		}
 		return true;
 	}
-	
+
 	/**
 	 * 计算领取次数
 	 * @param kit 礼包名称
@@ -150,12 +186,12 @@ public class KitGetter{
 				WkKit.getPlayerData().setKitTime(p.getName(), kitname, kit.getTimes());
 				return true;
 			}
-			
+
 		}
 		int times = WkKit.getPlayerData().getKitTime(p.getName(),kitname);
 		if(times != 0) return true;
 		return false;
-		
+
 	}
 
 	/**
@@ -170,7 +206,7 @@ public class KitGetter{
 		});
 		return true;
 	}
-	
+
 	/**
 	 * 领取后执行
 	 * @param kit 礼包名称
@@ -178,30 +214,54 @@ public class KitGetter{
 	 */
 	private void getSuccess(Kit kit, Player p) {
 		String kitname = kit.getKitname();
+		
+		// 处理领取次数
 		int times = kit.getTimes(); // 获取初始领取次数
-		if(WkKit.getPlayerData().getKitTime(p.getName(),kitname) != null) {
-			times = WkKit.getPlayerData().getKitTime(p.getName(),kitname);
-		}else{
-			WkKit.getPlayerData().setKitTime(p.getName(),kitname,times); // 初始化次数
+		if(WkKit.getPlayerData().getKitTime(p.getName(), kitname) != null) {
+			times = WkKit.getPlayerData().getKitTime(p.getName(), kitname);
+		} else {
+			WkKit.getPlayerData().setKitTime(p.getName(), kitname, times); // 初始化次数
 		}
-		// 计算领取状态（DoCron存在时）
+		
+		// 更新为下次可领取时间
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+		Calendar nextTime = Calendar.getInstance();
+		
 		if(kit.getDocron() != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			// 标注
-			WkKit.getPlayerData().setKitData(p.getName(), kitname, sdf.format(kit.getNextRC().getTime()));
-			MessageManager.infoDeBug("当前状态：" + WkKit.getPlayerData().getKitData(p.getName(),kitname));
+			// 如果有Cron表达式，使用下次执行时间
+			Date nextExecution = CronManager.getNextExecution(kit.getDocron());
+			nextTime.setTime(nextExecution);
+		} else if(kit.getDelay() != null && kit.getDelay() > 0) {
+			// 如果有固定延迟，计算下次可领取时间
+			nextTime.add(Calendar.MINUTE, kit.getDelay());
 		}
-		// 计算领取次数（times大于0时计算）
-		if(times > 0)WkKit.getPlayerData().setKitTime(p.getName(), kitname, times - 1);
-		// 如果领取次数变成0了就也变成false
-		if(WkKit.getPlayerData().getKitTime(p.getName(),kitname) == 0)WkKit.getPlayerData().setKitData(p.getName(), kitname, "false");
+		
+		// 更新data为下次领取时间
+		String nextTimeStr = sdf.format(nextTime.getTime());
+		WkKit.getPlayerData().setKitData(p.getName(), kitname, nextTimeStr);
+		
+		// 处理领取次数
+		if(times > 0) {
+			times--;
+			WkKit.getPlayerData().setKitTime(p.getName(), kitname, times);
+			
+			// 如果领取次数变成0，标记为不可领取
+			if(times == 0) {
+				WkKit.getPlayerData().setKitData(p.getName(), kitname, "false");
+			}
+		}
+		
 		// 发送物品
 		ItemStack[] itemlist = kit.getItemStacks();
-		for(ItemStack item : itemlist) {
-			//添加物品至背包
-			WKTool.addItem(item,p);
+		if(itemlist != null) {
+			for(ItemStack item : itemlist) {
+				if(item != null) {
+					WKTool.addItem(item, p);
+				}
+			}
 		}
-		// 发送消息
-		p.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GET_SUCCESS",ChatColor.GREEN));
+		
+		// 发送成功消息
+		p.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GET_SUCCESS", ChatColor.GREEN));
 	}
 }

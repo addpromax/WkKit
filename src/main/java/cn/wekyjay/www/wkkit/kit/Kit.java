@@ -226,12 +226,6 @@ public class Kit {
 	public void setDocron(String docron) {
 		this.docron = docron;
 		this.getConfigurationSection().set("DoCron", docron);
-		// 判断逻辑
-		if(docron != null) {
-			Calendar cnext = Calendar.getInstance();//初始化时间
-			cnext.setTime(CronManager.getNextExecution(this.docron)); // 获取下次执行的时间
-			this.nextRC = cnext;
-		}
 	}
 	
 	public List<String> getDrop() {
@@ -286,10 +280,9 @@ public class Kit {
 	 * 重新计算下次礼包的刷新时间
 	 */
 	public void restNextRC() {
-		// 判断逻辑
 		if(docron != null) {
-			Calendar cnext = Calendar.getInstance();//初始化时间
-			cnext.setTime(CronManager.getNextExecution(this.docron)); // 初始化下次执行的时间
+			Calendar cnext = Calendar.getInstance();
+			cnext.setTime(CronManager.getNextExecution(this.docron));
 			this.nextRC = cnext;
 		}
 	}
@@ -328,7 +321,7 @@ public class Kit {
 				String[] str = icon.substring(12).split(":");
 				item = new ItemStack(Material.getMaterial(str[0]));
 				/**
-				 * @20230819 修复CUSTOMDATA图标失效问题
+				 * @20230819 修复CUSTOMDATA图标效问题
 				 */
 				ItemMeta im = item.getItemMeta();
                 im.setCustomModelData(Integer.parseInt(str[1]));
@@ -357,4 +350,93 @@ public class Kit {
 	
 	
 	
+	// 添加新的判断方法
+	public boolean canReceive(String playerName) {
+		Calendar now = Calendar.getInstance();
+		String lastTimeStr = WkKit.getPlayerData().getKitData(playerName, this.kitname);
+		// 如果是第一次领取
+		if(lastTimeStr == null) {
+			return true;
+		}
+		
+		try {
+			// 解析上次领取时间
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d-H-m-s");
+			Calendar lastTime = Calendar.getInstance();
+			lastTime.setTime(sdf.parse(lastTimeStr));
+			
+			// 检查固定延迟(delay)
+			if(delay != null && delay > 0) {
+				Calendar nextTime = (Calendar) lastTime.clone();
+				nextTime.add(Calendar.MINUTE, delay);
+				if(now.before(nextTime)) {
+					return false;
+				}
+			}
+			
+			// 检查Cron表达式
+			if(docron != null) {
+				Date nextExecution = CronManager.getNextExecution(this.docron);
+				Calendar cronNextTime = Calendar.getInstance();
+				cronNextTime.setTime(nextExecution);
+				
+				// 如果现在时间在上次领取时间和下次执行时间之间，说明还未到领取时间
+				if(now.after(lastTime) && now.before(cronNextTime)) {
+					return false;
+				}
+			}
+			
+			return true;
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * 计算并返回下次可领取时间
+	 * @param playerName 玩家名
+	 * @return 下次可领取时间
+	 */
+	public Calendar getNextReceiveTime(String playerName) {
+		String lastTimeStr = WkKit.getPlayerData().getKitData(playerName, this.kitname);
+		Calendar nextTime = Calendar.getInstance();
+		
+		// 如果状态为true，直接返回当前时间
+		if("true".equalsIgnoreCase(lastTimeStr)) {
+			return nextTime;
+		}
+		
+		try {
+			// 如果有历史记录，解析上次领取时间
+			if(lastTimeStr != null) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+				Calendar lastTime = Calendar.getInstance();
+				lastTime.setTime(sdf.parse(lastTimeStr));
+				
+				// 如果有固定延迟
+				if(delay != null && delay > 0) {
+					nextTime = (Calendar) lastTime.clone();
+					nextTime.add(Calendar.MINUTE, delay);
+				}
+			}
+			
+			// 如果有Cron表达式
+			if(docron != null) {
+				Date nextExecution = CronManager.getNextExecution(this.docron);
+				Calendar cronNextTime = Calendar.getInstance();
+				cronNextTime.setTime(nextExecution);
+				
+				// 取较晚的时间作为下次可领取时间
+				if(cronNextTime.after(nextTime)) {
+					nextTime = cronNextTime;
+				}
+			}
+			
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return nextTime;
+	}
 }

@@ -15,7 +15,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.text.SimpleDateFormat;
 
 import static org.bukkit.event.inventory.InventoryAction.NOTHING;
 import static org.bukkit.event.inventory.InventoryAction.UNKNOWN;
@@ -30,32 +32,28 @@ public class KitMenuListener implements Listener{
 		if(e.getInventory().getHolder() instanceof MenuHolder) {
 			e.setCancelled(true);// 取消物品的拿取
 			if(e.getAction().equals(NOTHING) || e.getAction().equals(UNKNOWN)) {
-				e.setCancelled(true);
-		        return;
+				return;
 			}
 			
 			Player p = Bukkit.getPlayer(e.getWhoClicked().getName());
 			//如果点击是空格子就取消事件
 			try {
-				new NBTItem(e.getCurrentItem());
-			}catch(NullPointerException e1) {
-				return;
-			}
-			
-			NBTItem itemnbt = new NBTItem(e.getCurrentItem());//获取被点击的礼包的NBT
-			// 如果存在key就是可以进行礼包领取操作
-			if(itemnbt.hasKey("wkkit")) {
-				String kitname = itemnbt.getString("wkkit");
-				// 如果是右键则预览礼包
-				if(e.getClick().isRightClick()) {
-					new KitInfo().getKitInfo(kitname, p);
-					return;
-				}else {
-				// 如果是其它的键就领取礼包
+				NBTItem itemnbt = new NBTItem(e.getCurrentItem());
+				if(itemnbt.hasKey("wkkit")) {
+					String kitname = itemnbt.getString("wkkit");
+					Kit kit = Kit.getKit(kitname);
+					
+					// 如果是右键则预览礼包
+					if(e.getClick().isRightClick()) {
+						new KitInfo().getKitInfo(kitname, p);
+						return;
+					}
+					
+					// 尝试领取礼包
 					MenuHolder menuholder = (MenuHolder) e.getInventory().getHolder();
-					new KitGetter().getKit(Kit.getKit(kitname), p, menuholder.getMenuname());
+					new KitGetter().getKit(kit, p, menuholder.getMenuname());
 				}
-			}else {
+			} catch(NullPointerException e1) {
 				return;
 			}
 			
