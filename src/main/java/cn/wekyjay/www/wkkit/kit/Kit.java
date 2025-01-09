@@ -410,7 +410,7 @@ public class Kit {
 		try {
 			// 如果有历史记录，解析上次领取时间
 			if(lastTimeStr != null) {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Calendar lastTime = Calendar.getInstance();
 				lastTime.setTime(sdf.parse(lastTimeStr));
 				

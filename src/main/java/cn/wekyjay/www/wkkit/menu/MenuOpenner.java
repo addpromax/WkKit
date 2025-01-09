@@ -75,7 +75,7 @@ public class MenuOpenner {
 					}
 					
 					if(lastTimeStr != null) {
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 						
 						Calendar lastTime = Calendar.getInstance();
 						lastTime.setTime(sdf.parse(lastTimeStr));

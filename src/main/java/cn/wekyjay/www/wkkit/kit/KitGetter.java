@@ -47,7 +47,7 @@ public class KitGetter{
 			} else {
 				try {
 					// 解析时间字符串
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					Calendar lastTime = Calendar.getInstance();
 					lastTime.setTime(sdf.parse(lastTimeStr));
 					Calendar now = Calendar.getInstance();
@@ -224,7 +224,7 @@ public class KitGetter{
 		}
 		
 		// 更新为下次可领取时间
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar nextTime = Calendar.getInstance();
 		
 		if(kit.getDocron() != null) {
