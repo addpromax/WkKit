@@ -34,10 +34,10 @@ public class LangConfigLoader {
 		}
 		File[] ff = new File(path).listFiles();
 		boolean found = false;
-		for(File fs : ff) {
-			if(fs.isFile() && fs.getName().equals(lang + ".yml")) {
-				langFile = fs;
-				langConfig = YamlConfiguration.loadConfiguration(fs);
+		 for(File fs : ff) {
+			 if(fs.isFile() && fs.getName().equals(lang + ".yml")) {
+				 langFile = fs;
+				 langConfig = YamlConfiguration.loadConfiguration(fs);
 				found = true;
 				break;
 			}
@@ -50,8 +50,8 @@ public class LangConfigLoader {
 					langConfig = YamlConfiguration.loadConfiguration(fs);
 					break;
 				}
-			}
-		}
+			 }
+		 }
 	}
 	/**
 	 * 重载配置

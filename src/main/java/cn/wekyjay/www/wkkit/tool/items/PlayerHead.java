@@ -95,7 +95,7 @@ public enum PlayerHead {
 		long most = (Long.parseLong(parts[0].trim()) << 32) | (Long.parseLong(parts[1].trim()) & 0xFFFFFFFFL);
 		long least = (Long.parseLong(parts[2].trim()) << 32) | (Long.parseLong(parts[3].trim()) & 0xFFFFFFFFL);
 		return new UUID(most, least);
-	}
+		}
 
 	public ItemStack getItemStack() {
 		return head;

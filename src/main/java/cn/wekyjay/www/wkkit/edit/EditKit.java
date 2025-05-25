@@ -58,7 +58,7 @@ public class EditKit implements Listener {
 		for(String kitGroupName : KitGroupManager.getGroups()) {
 			ItemStack item = new ItemEditer(new ItemStack(Material.BOOK)).setDisplayName(kitGroupName).getItemStack();
 			NBT.modify(item, nbti->{
-				nbti.setString("wkkit", kitGroupName);
+			nbti.setString("wkkit", kitGroupName);
 			});
 			kitGroupItemList.add(item);
 		}
@@ -328,7 +328,7 @@ public class EditKit implements Listener {
 		}
 		return kitinv;
 	}
-
+	
 	@EventHandler
 	public void onInvClick(InventoryClickEvent e) {
 		// 礼包管理界面
@@ -363,7 +363,7 @@ public class EditKit implements Listener {
 		        String kitname = ItemEditer.getWkKitTagValue(e.getCurrentItem());
 		        if (kitname != null) {
 		            Inventory inv = editGroup(kitname, Integer.valueOf(ItemEditer.getWkKitTagValue(e.getCurrentItem())).intValue() - 1);
-		            e.getWhoClicked().openInventory(inv);
+		        e.getWhoClicked().openInventory(inv);
 		        }
 		        return;
 		      } 
@@ -371,7 +371,7 @@ public class EditKit implements Listener {
 		        String kitname = ItemEditer.getWkKitTagValue(e.getCurrentItem());
 		        if (kitname != null) {
 		            Inventory inv = editGroup(kitname, Integer.valueOf(ItemEditer.getWkKitTagValue(e.getCurrentItem())).intValue() + 1);
-		            e.getWhoClicked().openInventory(inv);
+		        e.getWhoClicked().openInventory(inv);
 		        }
 		        return;
 		      } 
@@ -392,25 +392,25 @@ public class EditKit implements Listener {
 								return;
 							}
 						}
-						if(e.getRawSlot() == 7) {
-							e.getWhoClicked().closeInventory();
-							KitDeletePrompt.newConversation((Player)e.getWhoClicked(), kitname);
-							return;
-						}
-						if(key.equals("DisplayName")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "DisplayName");return;}
-						if(key.equals("Icon")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Icon");return;}
-						if(key.equals("Times")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Times");return;}
-						if(key.equals("Delay")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Delay");return;}
-						if(key.equals("Permission")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Permission");return;}
-						if(key.equals("DoCron")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "DoCron");return;}
-						if(key.equals("Commands")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Commands");return;}
-						if(key.equals("Lore")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Lore");return;}
-						if(key.equals("Drop")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Drop");return;}
-						if(key.equals("Vault")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Vault");return;}
-						if(key.equals("NoRefreshFirst")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "NoRefreshFirst");return;}
-						if(key.equals("MythicMobs")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "MythicMobs");return;}
-						if(key.equals("Item")) {e.getWhoClicked().openInventory(this.editKitItem(kitname));return;}
-					}
+				if(e.getRawSlot() == 7) {
+					e.getWhoClicked().closeInventory();
+					KitDeletePrompt.newConversation((Player)e.getWhoClicked(), kitname);
+					return;
+				}
+				if(key.equals("DisplayName")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "DisplayName");return;}
+				if(key.equals("Icon")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Icon");return;}
+				if(key.equals("Times")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Times");return;}
+				if(key.equals("Delay")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Delay");return;}
+				if(key.equals("Permission")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Permission");return;}
+				if(key.equals("DoCron")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "DoCron");return;}
+				if(key.equals("Commands")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Commands");return;}
+				if(key.equals("Lore")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Lore");return;}
+				if(key.equals("Drop")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Drop");return;}
+				if(key.equals("Vault")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Vault");return;}
+				if(key.equals("NoRefreshFirst")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "NoRefreshFirst");return;}
+				if(key.equals("MythicMobs")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "MythicMobs");return;}
+				if(key.equals("Item")) {e.getWhoClicked().openInventory(this.editKitItem(kitname));return;}
+			}
 				}
 			}
 			if( ItemEditer.hasWkKitTag(e.getCurrentItem()) && e.getClick().equals(ClickType.RIGHT)) {
@@ -418,22 +418,22 @@ public class EditKit implements Listener {
 				if (kitname != null) {
 					String key = ItemEditer.getWkKitTagValue(e.getCurrentItem());
 					if (key != null) {
-						List<Integer> hasflags = Arrays.asList(9,10,11,12,18,19,20,21,27,28,29,30);
-						if(hasflags.contains(e.getRawSlot())) {
-							if(key.equals("DisplayName")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "DisplayName");return;}
-							if(key.equals("Icon")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Icon");return;}
-							if(key.equals("Times")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Times");return;}
-							if(key.equals("Delay")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Delay");return;}
-							if(key.equals("Permission")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Permission");return;}
-							if(key.equals("DoCron")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "DoCron");return;}
-							if(key.equals("Commands")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Commands");return;}
-							if(key.equals("Lore")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Lore");return;}
-							if(key.equals("Drop")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Drop");return;}
-							if(key.equals("Vault")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Vault");return;}
-							if(key.equals("NoRefreshFirst")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "NoRefreshFirst");return;}
-							if(key.equals("MythicMobs")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "MythicMobs");return;}
-						}else {
-							return;
+				List<Integer> hasflags = Arrays.asList(9,10,11,12,18,19,20,21,27,28,29,30);
+				if(hasflags.contains(e.getRawSlot())) {
+					if(key.equals("DisplayName")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "DisplayName");return;}
+					if(key.equals("Icon")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Icon");return;}
+					if(key.equals("Times")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Times");return;}
+					if(key.equals("Delay")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Delay");return;}
+					if(key.equals("Permission")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Permission");return;}
+					if(key.equals("DoCron")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "DoCron");return;}
+					if(key.equals("Commands")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Commands");return;}
+					if(key.equals("Lore")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Lore");return;}
+					if(key.equals("Drop")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Drop");return;}
+					if(key.equals("Vault")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "Vault");return;}
+					if(key.equals("NoRefreshFirst")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "NoRefreshFirst");return;}
+					if(key.equals("MythicMobs")) {e.getWhoClicked().closeInventory();KitFlagPrompt.deFlag((Player)e.getWhoClicked(), kitname, "MythicMobs");return;}
+				}else {
+					return;
 						}
 					}
 				}
@@ -448,15 +448,15 @@ public class EditKit implements Listener {
 					if (kitname != null) {
 						Kit kit = Kit.getKit(kitname);
 						if (kit != null) {
-							List<ItemStack> list = new ArrayList<ItemStack>();
-							for(int i = 0;i < 36; i++) {
-								if(e.getInventory().getItem(i) == null) continue;
-								list.add(e.getInventory().getItem(i));
-							}
-							kit.setItemStack(list.toArray(new ItemStack[list.size()]));
-							kit.saveConfig();
-							e.getWhoClicked().openInventory(this.editKit(kit.getKitname()));
-							e.getWhoClicked().sendMessage(LangConfigLoader.getStringWithPrefix("SAVE_SUCCESS", ChatColor.GREEN));
+					List<ItemStack> list = new ArrayList<ItemStack>();
+					for(int i = 0;i < 36; i++) {
+						if(e.getInventory().getItem(i) == null) continue;
+						list.add(e.getInventory().getItem(i));
+					}
+					kit.setItemStack(list.toArray(new ItemStack[list.size()]));
+					kit.saveConfig();
+					e.getWhoClicked().openInventory(this.editKit(kit.getKitname()));
+					e.getWhoClicked().sendMessage(LangConfigLoader.getStringWithPrefix("SAVE_SUCCESS", ChatColor.GREEN));
 						}
 					}
 				}

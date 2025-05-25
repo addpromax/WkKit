@@ -233,7 +233,7 @@ public class WkKit extends JavaPlugin implements PluginMessageListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UNINSTALL"));
+       MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UNINSTALL"));
     }
 
     /**
