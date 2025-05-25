@@ -32,7 +32,7 @@ public class KitCache implements Listener{
 	public KitCache() {
 		isEnable = WkKit.getWkKit().getConfig().getBoolean("Cache.Enable");
 		if(isEnable) {
-			WkKit.getWkKit().getLogger().info("启用日志管理");
+			WkKit.getWkKit().getLogger().info(LangConfigLoader.getString("LOG_MANAGE_ENABLE"));
 			Bukkit.getPluginManager().registerEvents(this, WkKit.getWkKit());
 			File file = new File(CACHEPATH);
 			// 不存在该路径则创建一个
@@ -40,7 +40,7 @@ public class KitCache implements Listener{
 			// 初始化cacheYaml
 			cacheList = new ArrayList<>();
 		}else{
-			WkKit.getWkKit().getLogger().info("日志管理已关闭");
+			WkKit.getWkKit().getLogger().info(LangConfigLoader.getString("LOG_MANAGE_DISABLE"));
 		}
 
 	}
@@ -66,7 +66,8 @@ public class KitCache implements Listener{
 				ra.write("\n".getBytes("UTF-8"));
 			}
 			ra.close();
-			WkKit.getWkKit().getLogger().info("当前日志已保存至 Caches\\"+filename+".log");
+			String msg = LangConfigLoader.getString("LOG_SAVED").replace("{path}", "Caches\\"+filename+".log");
+			WkKit.getWkKit().getLogger().info(msg);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

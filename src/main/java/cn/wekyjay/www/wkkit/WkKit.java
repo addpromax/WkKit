@@ -30,7 +30,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,13 +81,9 @@ public class WkKit extends JavaPlugin implements PluginMessageListener {
     @Override
     public void onEnable() {
         wkkit = this;//为Getter赋值为本类
-
-
         saveDefaultConfig();//初始化Config文件
 
-
         reloadConfig();
-
 
         //创建文件
         playerConfigFile = new File(getDataFolder(),"player.yml");
@@ -162,7 +157,8 @@ public class WkKit extends JavaPlugin implements PluginMessageListener {
         MessageManager.sendMessageWithPrefix("    \\_______\\/ \\__\\/\\__\\/  \\__\\/\\__\\/\\________\\/   \\__\\/ ");
         MessageManager.sendMessageWithPrefix("");
         MessageManager.sendMessageWithPrefix("Version: "+ getDescription().getVersion() + " | Author: WekyJay | QQ Group: 945144520");
-        MessageManager.sendMessageWithPrefix("§a特别鸣谢：§eBiulay Gentry §7(排名不分先后)");
+        // MessageManager.sendMessageWithPrefix("§a特别鸣谢：§eBiulay Gentry §7(排名不分先后)");
+
 
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PapiHooker(this).register();
@@ -237,9 +233,7 @@ public class WkKit extends JavaPlugin implements PluginMessageListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-       MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UNINSTALL"));
+        MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UNINSTALL"));
     }
 
     /**

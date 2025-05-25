@@ -17,11 +17,17 @@ public class MySQLManager {
 	private String userPassword;
 	private Connection connection;
 	private String port;
+	private boolean useSSL;
+	private String tablePrefix;
 	public static MySQLManager instance = null;
 
 	
 	public static MySQLManager get() {
         return instance == null ? instance = new MySQLManager() : instance;
+    }
+	
+	public static String getTablePrefix() {
+        return get().tablePrefix == null ? "" : get().tablePrefix;
     }
 	
 
@@ -45,6 +51,8 @@ public class MySQLManager {
 		userName = WkKit.getWkKit().getConfig().getString("MySQL.username");
 		userPassword = WkKit.getWkKit().getConfig().getString("MySQL.password");
 		port = WkKit.getWkKit().getConfig().getString("MySQL.port");
+		useSSL = WkKit.getWkKit().getConfig().getBoolean("MySQL.useSSL", false);
+		tablePrefix = WkKit.getWkKit().getConfig().getString("MySQL.tablePrefix", "");
 		// 连接数据库
 		connectMySQL();
 		// 创建表
@@ -59,6 +67,7 @@ public class MySQLManager {
 	private void connectMySQL(){
 		try {
 			String init = databaseName.contains("?")?"&serverTimezone=UTC":"?serverTimezone=UTC";
+			init += "&useSSL=" + useSSL;
 			Druid druid = new Druid("jdbc:mysql://" + ip + ":" + port + "/" + databaseName + init,userName,userPassword);
 			connection = druid.getConnection();
 			WkKit.getWkKit().getLogger().info(LangConfigLoader.getString("MYSQL_CONNECT_SUCCESS"));

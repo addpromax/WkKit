@@ -9,6 +9,7 @@ import cn.wekyjay.www.wkkit.kit.KitGetter;
 import cn.wekyjay.www.wkkit.tool.WKTool;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class KitGive {
 	static WkKit wk = WkKit.getWkKit();// 调用主类实例		
@@ -25,18 +27,39 @@ public class KitGive {
 			sender.sendMessage(LangConfigLoader.getStringWithPrefix("Commands.give", ChatColor.GREEN));
 			return true;
 		}
-		Player p;
+		Player p = null;
+		String kitName = args[1];
+		Kit kit = Kit.getKit(kitName);
+		// 判断礼包是否存在
+		if(kit == null) {
+			sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_CREATE_NONEXIST", ChatColor.RED));
+			return true;
+		}
 		if(args[2].equalsIgnoreCase("@Me")) {
 			p = (Player)sender;
-		}else {
-			p = Bukkit.getPlayer(args[2]);//获取玩家实例	
-			if(p == null) {
+		} else {
+			// 寻找玩家
+			String player_name = args[2];
+			OfflinePlayer result_player = Arrays.stream(Bukkit.getOfflinePlayers())
+					.filter(offlinePlayer -> Objects.equals(offlinePlayer.getName(), player_name))
+					.findFirst().orElse(null);
+			// 判断玩家是否存在
+			if(result_player == null) {
 				sender.sendMessage(LangConfigLoader.getStringWithPrefix("NO_PLAYER", ChatColor.RED));
 				return true;
 			}
+			// 玩家不在线则发送至邮箱
+			if (!result_player.isOnline()){
+				sendToMail(player_name,kit);
+				// 提示发送成功
+				sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_SEND_ALL", ChatColor.GREEN));
+				return true;
+			}else {
+				p = result_player.getPlayer();
+			}
+
 		}
-		String kitname = args[1];
-		Kit kit = Kit.getKit(kitname);
+
 		this.ExcutionMode(sender,p, kit, args.length>=4?args[3]:"1");
 		return true;
 		
@@ -44,6 +67,8 @@ public class KitGive {
 	public void ExcutionMode(CommandSender sender,Player player, Kit kit, String mode) {
 		PlayerInventory pinv = player.getInventory();//使用封装类的getplayer方法获取玩家背包
 		ItemStack[] getItemList = kit.getItemStacks();//获取Kits.Item的list集合
+
+
 		switch(mode) {
 			case "2":
 				if(!WKTool.hasSpace(player, kit)) {//判断是否有足够的背包空间
@@ -57,7 +82,8 @@ public class KitGive {
 				break;
 			case "3":
 				if(!WKTool.hasSpace(player, 1)) {//判断是否有足够的背包空间
-					sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GIVE_FAILED",ChatColor.RED));
+					sendToMail(player.getName(),kit);
+					sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GIVE_SUCCESS",ChatColor.GREEN));
 					return;
 				}
 				if(PlayersReceiveKitEvent.callEvent(player, kit, ReceiveType.GIVE).isCancelled()) return;// 回调事件
@@ -65,7 +91,8 @@ public class KitGive {
 				break;
 			case "4":
 				if(!WKTool.hasSpace(player, kit)) {//判断是否有足够的背包空间
-					sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GIVE_FAILED",ChatColor.RED));
+					sendToMail(player.getName(),kit);
+					sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GIVE_SUCCESS",ChatColor.GREEN));
 					return;
 				}
 				if(PlayersReceiveKitEvent.callEvent(player, kit, ReceiveType.GIVE).isCancelled()) return;// 回调事件
@@ -75,18 +102,32 @@ public class KitGive {
 				break;
 			default:
 				if(!WKTool.hasSpace(player, kit)) {//判断是否有足够的背包空间
-					sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GIVE_FAILED",ChatColor.RED));
+					sendToMail(player.getName(),kit);
+					sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GIVE_SUCCESS",ChatColor.GREEN));
 					return;
 				}
 				if(PlayersReceiveKitEvent.callEvent(player, kit, ReceiveType.GIVE).isCancelled()) return;// 回调事件
 
-				// 1.3.0 取消物品堆叠 解决堆叠过多产生bug
+				/*
+				 *  1.3.0 取消物品堆叠 解决堆叠过多产生bug
+				 */
 				WKTool.addItem(player,getItemList);
-				// 添加模式4
 		}
 	    // 发送消息提示
 		sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GIVE_SUCCESS",ChatColor.GREEN));//输出发送成功
 	}
-	
 
+	/**
+	 * 	发送礼包至邮箱
+	 * @param player_name
+	 * @param kit
+	 */
+	private void sendToMail(String player_name,Kit kit){
+		if(WkKit.getPlayerData().contain_Mail(player_name,kit.getKitname())) {
+			int num = WkKit.getPlayerData().getMailKitNum(player_name, kit.getKitname());
+			WkKit.getPlayerData().setMailNum(player_name, kit.getKitname(), num + 1);
+		}else {
+			WkKit.getPlayerData().setMailNum(player_name, kit.getKitname(), 1);
+		}
+	}
 }

@@ -5,8 +5,11 @@ import cn.wekyjay.www.wkkit.config.LangConfigLoader;
 import cn.wekyjay.www.wkkit.config.MenuConfigLoader;
 import cn.wekyjay.www.wkkit.kit.Kit;
 import cn.wekyjay.www.wkkit.tool.items.PlayerHead;
+import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -129,20 +132,17 @@ public class WKTool{
 	 */
 	public static ItemStack nbtCovertoSkull(String skullnbt) {
 		ItemStack head = PlayerHead.DEFAULT.getItemStack();//新建一个头颅物品
-	    NBTItem nbti = new NBTItem(head);//传入头颅的NBT到NBTItem
-	    String nbt = skullnbt;
-		NBTContainer c = new NBTContainer(nbt);//添加一个NBT容器
-	    nbti.mergeCompound(c);
-	    head = nbti.getItem();
+		NBT.modify(head, nbt -> {
+			nbt.mergeCompound(NBT.parseNBT(skullnbt));
+		});
+		// 如需设置显示名和lore，请在此处获取ItemMeta并设置
 	    return head;
 	}
-	
-	public static NBTItem getItemNBT(ItemStack is) {
+	public static ReadWriteNBT getItemNBT(ItemStack is) {
 		if(is == null) {
 			return null;
 		}else {
-			NBTItem nbt = new NBTItem(is);
-			return nbt;
+			return NBT.itemStackToNBT(is);
 		}
 	}
 	
@@ -312,6 +312,33 @@ public class WKTool{
 		} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * 获取完整服务器版本号（如1.21.1）
+	 */
+	public static String getFullVersion() {
+		String bukkitVersion = Bukkit.getBukkitVersion();
+		String[] parts = bukkitVersion.split("-");
+		return parts[0];
+	}
+
+	/**
+	 * 比较两个版本号字符串
+	 * @return >0:v1大于v2，<0:v1小于v2，=0:相等
+	 */
+	public static int compareVersion(String v1, String v2) {
+		String[] arr1 = v1.split("\\.");
+		String[] arr2 = v2.split("\\.");
+		int len = Math.max(arr1.length, arr2.length);
+		for (int i = 0; i < len; i++) {
+			int n1 = i < arr1.length ? Integer.parseInt(arr1[i]) : 0;
+			int n2 = i < arr2.length ? Integer.parseInt(arr2[i]) : 0;
+			if (n1 != n2) {
+				return n1 - n2;
+			}
+		}
+		return 0;
 	}
 	
 }

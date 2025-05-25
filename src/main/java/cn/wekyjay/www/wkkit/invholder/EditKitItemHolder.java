@@ -7,7 +7,6 @@ public class EditKitItemHolder implements InventoryHolder {
 
 	@Override
 	public Inventory getInventory() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

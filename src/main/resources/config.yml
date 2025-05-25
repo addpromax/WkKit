@@ -61,6 +61,10 @@ MySQL:
    port: '3306'
    # 主机IP
    ip: 'localhost'
+   # 是否使用SSL
+   useSSL: false
+   # 数据库表前缀
+   tablePrefix: 'wkkit_'
 Cache:
    Enable: true
    PlayerReciveKit: true

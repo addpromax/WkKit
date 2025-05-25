@@ -56,4 +56,8 @@ enum SQLCommand {
     public String commandToString() {
         return command;
     }
+
+    public String format(String prefix) {
+        return command.replace("cdk", prefix + "cdk");
+    }
 }

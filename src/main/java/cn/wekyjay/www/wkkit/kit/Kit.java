@@ -8,6 +8,8 @@ import cn.wekyjay.www.wkkit.tool.WKTool;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NbtApiException;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
+import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -256,7 +258,7 @@ public class Kit {
 		this.itemStack = itemStack;
 		List<String> list = new ArrayList<String>();
 		for(ItemStack is : itemStack) {
-			list.add(NBTItem.convertItemtoNBT(is).toString());
+			list.add(NBT.itemStackToNBT(is).toString());
 		}
 		this.getConfigurationSection().set("Item", list);
 	}
@@ -316,7 +318,8 @@ public class Kit {
 			if(icon.contains("[SKULL]")) {
 				item = WKTool.nbtCovertoSkull(icon.substring(7));
 			}else if(icon.contains("[NBT]")) {
-				item = NBTItem.convertNBTtoItem(new NBTContainer(icon.substring(5)));
+				ReadWriteNBT nbt = NBT.parseNBT(icon.substring(5));
+				item = NBT.itemStackFromNBT(nbt);
 			}else if(icon.contains("[CUSTOMDATA]")){
 				String[] str = icon.substring(12).split(":");
 				item = new ItemStack(Material.getMaterial(str[0]));
@@ -336,9 +339,12 @@ public class Kit {
 			if(Material.getMaterial(icon) == null) item = new ItemStack(Material.getMaterial(WkKit.getWkKit().getConfig().getString("Default.Icon")));
 			else item = new ItemStack(Material.getMaterial(icon));
 		}
-		NBTItem im = new NBTItem(item);
-		im.setString("wkkit", kitname);
-		item = im.getItem();
+
+		// 先用NBT.modify修改NBT
+		NBT.modify(item, nbt -> {
+			nbt.setString("wkkit", kitname);
+		});
+		// 再获取ItemMeta并设置显示名和lore
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(displayName);
 		meta.setLore(lore);

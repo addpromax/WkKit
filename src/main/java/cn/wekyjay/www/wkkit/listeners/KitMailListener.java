@@ -55,7 +55,7 @@ public class KitMailListener implements Listener {
             }
             String name = e.getWhoClicked().getName();
             Player p = (Player) e.getWhoClicked();
-            if (e.getRawSlot() >= 8 & e.getRawSlot() <= 44 && WKTool.getItemNBT(e.getCurrentItem()).hasKey("wkkit") && WKTool.hasSpace(p, 1)) {
+            if (e.getRawSlot() >= 8 & e.getRawSlot() <= 44 && WKTool.getItemNBT(e.getCurrentItem()).hasTag("wkkit") && WKTool.hasSpace(p, 1)) {
                 p.getInventory().addItem(new ItemStack[]{e.getCurrentItem()});
                 String kitname = WKTool.getItemNBT(e.getCurrentItem()).getString("wkkit");
                 PlayersReceiveKitEvent event = new PlayersReceiveKitEvent(p, Kit.getKit(kitname), ReceiveType.MAIL);
@@ -80,7 +80,7 @@ public class KitMailListener implements Listener {
                         return;
                     }
                     for (ItemStack is : e.getInventory().getContents()) {
-                        if (is != null && WKTool.getItemNBT(is).hasKey("wkkit").booleanValue()) {
+                        if (is != null && WKTool.getItemNBT(is).hasTag("wkkit")) {
                             String kitname = WKTool.getItemNBT(is).getString("wkkit");
                             // 回调事件
                             PlayersReceiveKitEvent event = new PlayersReceiveKitEvent(p, Kit.getKit(kitname), ReceiveType.MAIL);

@@ -2,6 +2,7 @@ package cn.wekyjay.www.wkkit.mysql.mailsqldata;
 
 import cn.wekyjay.www.wkkit.mysql.MySQLManager;
 import cn.wekyjay.www.wkkit.tool.MessageManager;
+import cn.wekyjay.www.wkkit.config.LangConfigLoader;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,12 +15,12 @@ public class MailSQLData {
 	public static void createTable(){
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
-		String cmd = SQLCommand.CREATE_TABLE.commandToString();
+		String cmd = SQLCommand.CREATE_TABLE.format(MySQLManager.getTablePrefix());
 		try {
 			ps = connection.prepareStatement(cmd);
 			MySQLManager.get().doCommand(ps);
 		} catch (SQLException e) {
-			MessageManager.info("§c邮箱数据表创建失败");
+			MessageManager.info(LangConfigLoader.getString("MAIL_SQL_CREATE_FAIL"));
 			e.printStackTrace();
 		}finally {
 			MySQLManager.close(null,ps,connection);
@@ -30,7 +31,7 @@ public class MailSQLData {
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
 		try {
-			String s = SQLCommand.ADD_DATA.commandToString();
+			String s = SQLCommand.ADD_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setInt(1, 0);  // id
 			ps.setString(2, playername);
@@ -47,7 +48,7 @@ public class MailSQLData {
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
 		try {
-			String s = SQLCommand.DELETE_DATA.commandToString();
+			String s = SQLCommand.DELETE_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, playername);
 			ps.setString(2, kitname);
@@ -64,7 +65,7 @@ public class MailSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_DATA.commandToString();
+			String s = SQLCommand.SELECT_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, playername);
 			rs = ps.executeQuery();
@@ -83,7 +84,7 @@ public class MailSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_DATA.commandToString();
+			String s = SQLCommand.SELECT_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, playername);
 			rs = ps.executeQuery();
@@ -104,7 +105,7 @@ public class MailSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_DATA.commandToString();
+			String s = SQLCommand.SELECT_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, playername);
 			rs = ps.executeQuery();
@@ -125,7 +126,7 @@ public class MailSQLData {
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
 		try {
-			String s = SQLCommand.UPDATE_NUM_DATA.commandToString();
+			String s = SQLCommand.UPDATE_NUM_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setInt(1, value);
 			ps.setString(2, playername);

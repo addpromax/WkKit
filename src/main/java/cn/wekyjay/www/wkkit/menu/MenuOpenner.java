@@ -11,6 +11,7 @@ import cn.wekyjay.www.wkkit.tool.CronManager;
 import cn.wekyjay.www.wkkit.tool.MessageManager;
 import cn.wekyjay.www.wkkit.tool.WKTool;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -130,11 +131,11 @@ public class MenuOpenner {
 					// [判断是否可以领取]
 					// 不能领取的条件
 					if(Kit.getKit(kitname).isNoRefreshFirst()
-							|| !WkKit.getPlayerData().getKitData(playername, kitname).equalsIgnoreCase("true")
+							|| WkKit.getPlayerData().getKitData(playername, kitname) != null && !WkKit.getPlayerData().getKitData(playername, kitname).equalsIgnoreCase("true")
 							|| WkKit.getPlayerData().getKitTime(playername, kitname) != null && WkKit.getPlayerData().getKitTime(playername, kitname) == 0) {
 						for(int num : WKTool.getSlotNum(menuname + ".Slots.Get.slot")) {
 							ItemStack item = new ItemStack(Material.BARRIER);
-							// 设置���定义图标
+							// 设置自定义图标
 							if(MenuConfigLoader.contains(menuname + ".Slots." + kitname + ".offid")) {
 								item = new ItemStack(Material.getMaterial(MenuConfigLoader.getString(menuname + ".Slots." + kitname + ".offid")));
 							}
@@ -157,7 +158,9 @@ public class MenuOpenner {
 							meta.setLore(list);
 							meta.setDisplayName(kit.getDisplayName());
 							item.setItemMeta(meta);
-							inv.setItem(num, item);
+							ReadWriteNBT nbt = de.tr7zw.changeme.nbtapi.NBT.itemStackToNBT(item);
+							nbt.setString("wkkit", kitname);
+							inv.setItem(num, de.tr7zw.changeme.nbtapi.NBT.itemStackFromNBT(nbt));
 						}
 					}else {
 						ItemStack is = new ItemStack(Material.getMaterial(id));
@@ -175,9 +178,9 @@ public class MenuOpenner {
 								is.setItemMeta(meta);
 							}
 							// 设置NBT
-							NBTItem nbti = new NBTItem(is);
-							nbti.setString("wkkit", kitname);
-							inv.setItem(num, nbti.getItem());
+							ReadWriteNBT nbt = de.tr7zw.changeme.nbtapi.NBT.itemStackToNBT(is);
+							nbt.setString("wkkit", kitname);
+							inv.setItem(num, de.tr7zw.changeme.nbtapi.NBT.itemStackFromNBT(nbt));
 						}
 					}
 				}else {
@@ -196,9 +199,9 @@ public class MenuOpenner {
 							is.setItemMeta(meta);
 						}
 						// 设置NBT
-						NBTItem nbti = new NBTItem(is);
-						nbti.setString("wkkit", kitname);
-						inv.setItem(num, nbti.getItem());
+						ReadWriteNBT nbt = de.tr7zw.changeme.nbtapi.NBT.itemStackToNBT(is);
+						nbt.setString("wkkit", kitname);
+						inv.setItem(num, de.tr7zw.changeme.nbtapi.NBT.itemStackFromNBT(nbt));
 					}
 				}
 				
@@ -269,9 +272,9 @@ public class MenuOpenner {
 							meta.setLore(list);
 							meta.setDisplayName(kit.getDisplayName());
 							item.setItemMeta(meta);
-							NBTItem nbti = new NBTItem(item);
-							nbti.removeKey("wkkit");
-							inv.setItem(num, nbti.getItem());
+							ReadWriteNBT nbt = de.tr7zw.changeme.nbtapi.NBT.itemStackToNBT(item);
+							nbt.removeKey("wkkit");
+							inv.setItem(num, de.tr7zw.changeme.nbtapi.NBT.itemStackFromNBT(nbt));
 						}
 				}else {
 					ItemStack is = Kit.getKit(kitname).getKitItem();
@@ -287,7 +290,9 @@ public class MenuOpenner {
 							meta.setLore(list);
 							is.setItemMeta(meta);
 						}
-						inv.setItem(num, is);
+						ReadWriteNBT nbt = de.tr7zw.changeme.nbtapi.NBT.itemStackToNBT(is);
+						nbt.setString("wkkit", kitname);
+						inv.setItem(num, de.tr7zw.changeme.nbtapi.NBT.itemStackFromNBT(nbt));
 					}
 				}
 			}else {
@@ -304,7 +309,9 @@ public class MenuOpenner {
 						meta.setLore(list);
 						is.setItemMeta(meta);
 					}
-					inv.setItem(num, is);
+					ReadWriteNBT nbt = de.tr7zw.changeme.nbtapi.NBT.itemStackToNBT(is);
+					nbt.setString("wkkit", kitname);
+					inv.setItem(num, de.tr7zw.changeme.nbtapi.NBT.itemStackFromNBT(nbt));
 				}
 			}
 		}

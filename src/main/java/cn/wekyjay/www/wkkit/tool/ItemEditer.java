@@ -1,6 +1,7 @@
 package cn.wekyjay.www.wkkit.tool;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -8,6 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.wekyjay.www.wkkit.tool.WKTool;
 
 public class ItemEditer {
 	private ItemStack itemStack;
@@ -49,23 +51,23 @@ public class ItemEditer {
 		return this;
 	}
 	
-	public ItemEditer setNBTString(String key,String value) {
-		NBTItem nbti = getNBTItem();
-		nbti.setString(key, value);
-		itemStack = nbti.getItem();
+	public ItemEditer setNBTString(String key, String value) {
+		ReadWriteNBT nbt = NBT.itemStackToNBT(itemStack);
+		nbt.setString(key, value);
+		itemStack = NBT.itemStackFromNBT(nbt);
 		return this;
 	}
-	public ItemEditer setNBTInteger(String key,Integer value) {
-		NBTItem nbti = getNBTItem();
-		nbti.setInteger(key, value);
-		itemStack = nbti.getItem();
+	public ItemEditer setNBTInteger(String key, Integer value) {
+		ReadWriteNBT nbt = NBT.itemStackToNBT(itemStack);
+		nbt.setInteger(key, value);
+		itemStack = NBT.itemStackFromNBT(nbt);
 		return this;
 	}
 	
 	public ItemEditer removeNBT(String key) {
-		NBTItem nbti = getNBTItem();
-		nbti.removeKey(key);;
-		itemStack = nbti.getItem();
+		ReadWriteNBT nbt = NBT.itemStackToNBT(itemStack);
+		nbt.removeKey(key);
+		itemStack = NBT.itemStackFromNBT(nbt);
 		return this;
 	}
 	
@@ -79,9 +81,53 @@ public class ItemEditer {
 	public List<String> getLore() {
 		return itemStack.getItemMeta().getLore();
 	}
-	public NBTItem getNBTItem() {
-		NBTItem nbti = new NBTItem(itemStack);
-		return nbti;
+	public ReadWriteNBT getNBT() {
+		return NBT.itemStackToNBT(itemStack);
+	}
+
+	/**
+	 * 判断物品是否有wkkit标签，自动适配不同版本
+	 */
+	public static boolean hasWkKitTag(ItemStack item) {
+		String fullVersion = WKTool.getFullVersion();
+		ReadWriteNBT nbt = WKTool.getItemNBT(item);
+		if (WKTool.compareVersion(fullVersion, "1.20.5") >= 0) {
+			// 1.20.5及以上，查components.minecraft:custom_data
+			ReadWriteNBT components = nbt.getCompound("components");
+			if (components != null) {
+				ReadWriteNBT customData = components.getCompound("minecraft:custom_data");
+				return customData != null && customData.hasTag("wkkit");
+			}
+			return false;
+		} else {
+			// 低于1.20.5，直接查根节点
+			return nbt.hasTag("wkkit");
+		}
+	}
+
+	/**
+	 * 获取物品wkkit标签的值，自动适配不同版本
+	 */
+	public static String getWkKitTagValue(ItemStack item) {
+		String fullVersion = WKTool.getFullVersion();
+		ReadWriteNBT nbt = WKTool.getItemNBT(item);
+		if (WKTool.compareVersion(fullVersion, "1.20.5") >= 0) {
+			// 1.20.5及以上
+			ReadWriteNBT components = nbt.getCompound("components");
+			if (components != null) {
+				ReadWriteNBT customData = components.getCompound("minecraft:custom_data");
+				if (customData != null && customData.hasTag("wkkit")) {
+					return customData.getString("wkkit");
+				}
+			}
+			return null;
+		} else {
+			// 低于1.20.5
+			if (nbt.hasTag("wkkit")) {
+				return nbt.getString("wkkit");
+			}
+			return null;
+		}
 	}
 
 }

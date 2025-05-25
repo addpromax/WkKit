@@ -21,20 +21,37 @@ public class LangConfigLoader {
 		String lang = WkKit.getWkKit().getConfig().getString("Setting.Language");
 		if(lang.equals("none")) {
 			Locale locale = Locale.getDefault();
-			if(locale.toString().equals(new Locale("zh","CN").toString())) lang = "zh_CN";
-			else if(locale.toString().equals(new Locale("zh","TW").toString())) lang = "zh_TW";
-			else if(locale.toString().equals(new Locale("zh","HK").toString())) lang = "zh_HK";
+			String language = locale.getLanguage();
+			String country = locale.getCountry();
+			if ("zh".equals(language) && "CN".equals(country)) lang = "zh_CN";
+			else if ("zh".equals(language) && "TW".equals(country)) lang = "zh_TW";
+			else if ("zh".equals(language) && "HK".equals(country)) lang = "zh_HK";
+			else if ("ja".equals(language) && "JP".equals(country)) lang = "ja_JP";
+			else if ("ko".equals(language) && "KR".equals(country)) lang = "ko_KR";
 			else lang = "en_US";
 			WkKit.getWkKit().getConfig().set("Setting.Language", lang);
 			WkKit.getWkKit().saveConfig();
 		}
 		File[] ff = new File(path).listFiles();
-		 for(File fs : ff) {
-			 if(fs.isFile() && fs.getName().equals(lang + ".yml")) {
-				 langFile = fs;
-				 langConfig = YamlConfiguration.loadConfiguration(fs);
-			 }
-		 }
+		boolean found = false;
+		for(File fs : ff) {
+			if(fs.isFile() && fs.getName().equals(lang + ".yml")) {
+				langFile = fs;
+				langConfig = YamlConfiguration.loadConfiguration(fs);
+				found = true;
+				break;
+			}
+		}
+		// 如果没找到，降级为en_US
+		if(!found) {
+			for(File fs : ff) {
+				if(fs.isFile() && fs.getName().equals("en_US.yml")) {
+					langFile = fs;
+					langConfig = YamlConfiguration.loadConfiguration(fs);
+					break;
+				}
+			}
+		}
 	}
 	/**
 	 * 重载配置

@@ -14,12 +14,12 @@ public class PlayerSQLData {
 	public static void createTable(){
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
-		String cmd = SQLCommand.CREATE_TABLE.commandToString();
+		String cmd = SQLCommand.CREATE_TABLE.format(MySQLManager.getTablePrefix());
 		try {
 			ps = connection.prepareStatement(cmd);
 			MySQLManager.get().doCommand(ps);
 		} catch (SQLException e) {
-			MessageManager.info("§c玩家数据表创建失败");
+			MessageManager.info(LangConfigLoader.getString("PLAYER_SQL_CREATE_FAIL"));
 			e.printStackTrace();
 		}finally {
 			MySQLManager.close(null,ps,connection);
@@ -35,7 +35,7 @@ public class PlayerSQLData {
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
 		try {
-			String s = SQLCommand.ADD_DATA.commandToString();
+			String s = SQLCommand.ADD_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setInt(1, 0);
 			ps.setString(2, playername);
@@ -53,7 +53,7 @@ public class PlayerSQLData {
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
 		try {
-			String s = SQLCommand.DELETE_DATA.commandToString();
+			String s = SQLCommand.DELETE_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, playername);
 			ps.setString(2, kitname);
@@ -71,7 +71,7 @@ public class PlayerSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_DATA.commandToString();
+			String s = SQLCommand.SELECT_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, playername);
 			rs = ps.executeQuery();
@@ -92,7 +92,7 @@ public class PlayerSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_DATA.commandToString();
+			String s = SQLCommand.SELECT_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, playername);
 			rs = ps.executeQuery();
@@ -114,7 +114,7 @@ public class PlayerSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_DATA.commandToString();
+			String s = SQLCommand.SELECT_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, playername);
 			rs = ps.executeQuery();
@@ -136,7 +136,7 @@ public class PlayerSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_DATA.commandToString();
+			String s = SQLCommand.SELECT_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, playername);
 			rs = ps.executeQuery();
@@ -159,7 +159,7 @@ public class PlayerSQLData {
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
 		try {
-			String s = SQLCommand.UPDATE_TIME_DATA.commandToString();
+			String s = SQLCommand.UPDATE_TIME_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setInt(1, value);
 			ps.setString(2, playername);
@@ -182,7 +182,7 @@ public class PlayerSQLData {
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
 		try {
-			String s = SQLCommand.UPDATE_DATA_DATA.commandToString();
+			String s = SQLCommand.UPDATE_DATA_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, value);
 			ps.setString(2, playername);
@@ -210,7 +210,7 @@ public class PlayerSQLData {
 			// 语句执行
 			int id = 0;
 			String data = "true";
-			String s1 = "SELECT `id` FROM `player` WHERE `player` = ? AND `kitname` = ?"; // 搜索ID
+			String s1 = "SELECT `id` FROM `" + MySQLManager.getTablePrefix() + "player` WHERE `player` = ? AND `kitname` = ?"; // 搜索ID
 			ps = connection.prepareStatement(s1);
 			ps.setString(1, playername);
 			ps.setString(2, kitname);
@@ -218,7 +218,7 @@ public class PlayerSQLData {
 			while (rs.next()) if(rs.getString("id") != null) id = rs.getInt("id");
 
 
-			String s2 = "SELECT * FROM `player` WHERE `id` = ? for update"; // 锁定行
+			String s2 = "SELECT * FROM `" + MySQLManager.getTablePrefix() + "player` WHERE `id` = ? for update"; // 锁定行
 			ps = connection.prepareStatement(s2);
 			ps.setInt(1,id);
 			try {
@@ -235,7 +235,7 @@ public class PlayerSQLData {
 
 
 			if (data.equals("false")){
-				String s3 = SQLCommand.UPDATE_DATA_DATA.commandToString(); // 修改数据
+				String s3 = SQLCommand.UPDATE_DATA_DATA.format(MySQLManager.getTablePrefix()); // 修改数据
 				ps = connection.prepareStatement(s3);
 				ps.setString(1, value);
 				ps.setString(2, playername);

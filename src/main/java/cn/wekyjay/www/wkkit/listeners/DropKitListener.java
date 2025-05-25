@@ -5,6 +5,7 @@ import cn.wekyjay.www.wkkit.hook.MythicMobsHooker;
 import cn.wekyjay.www.wkkit.kit.Kit;
 import cn.wekyjay.www.wkkit.tool.CountDelayTime;
 import cn.wekyjay.www.wkkit.tool.WKTool;
+import cn.wekyjay.www.wkkit.tool.ItemEditer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,16 +26,13 @@ public class DropKitListener implements Listener{
 
 	@EventHandler
 	public void onPlayerClickKit(PlayerInteractEvent e) {
-		if(!e.hasItem()) {return;}//手上没有东西就结束方法
-		NBTItem nbti;
-		try {nbti = new NBTItem(e.getItem());}catch(NullPointerException e2) {return;}// 交互的物品为NULL则取消
+		if(!e.hasItem() || e.getItem() == null) {return;}//手上没有东西就结束方法
 		if(WKTool.getVersion() > 9 && !e.getHand().equals(EquipmentSlot.HAND)) {// 如果是高版本不是副手的话就返回
 			return;
 		}
-		if(nbti.hasKey("wkkit") ) {
-			String kitname = nbti.getString("wkkit");
+		if(ItemEditer.hasWkKitTag(e.getItem())) {
+			String kitname = ItemEditer.getWkKitTagValue(e.getItem());
 				if(e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
-					PlayerInventory pinv = e.getPlayer().getInventory();
 					Kit kit = Kit.getKit(kitname);
 					// 判断礼包是否为null
 					if (kit == null){
@@ -64,14 +62,14 @@ public class DropKitListener implements Listener{
 						int itemnum;
 						if(WKTool.getVersion() >= 9) {
 							ItemStack mainItem = e.getPlayer().getInventory().getItemInMainHand();
-							if(mainItem.getItemMeta() != null && WKTool.getItemNBT(mainItem).hasKey("wkkit")) {
+							if(mainItem.getItemMeta() != null && ItemEditer.hasWkKitTag(mainItem)) {
 								itemnum = mainItem.getAmount();//获取主手物品数量
 								e.getPlayer().getInventory().getItemInMainHand().setAmount(itemnum - 1);//主手物品数量-1
 							}
 						}else {
 							ItemStack mainItem = e.getPlayer().getInventory().getItemInHand();
 							itemnum = mainItem.getAmount();//获取主手物品数量
-							if(mainItem.getItemMeta() != null && WKTool.getItemNBT(mainItem).hasKey("wkkit")) {
+							if(mainItem.getItemMeta() != null && ItemEditer.hasWkKitTag(mainItem)) {
 								e.getPlayer().getInventory().getItemInHand().setAmount(itemnum - 1);//主手物品数量-1
 								if(itemnum - 1 == 0) {
 									e.getPlayer().getInventory().remove(e.getPlayer().getInventory().getItemInHand());
@@ -128,8 +126,7 @@ public class DropKitListener implements Listener{
 	public void blockPlace(BlockPlaceEvent e) {
 		// 检测手中的物品是否为空
 		if(e.getItemInHand().getAmount() > 0) {
-			NBTItem nbti = new NBTItem(e.getItemInHand());
-			if(nbti != null && nbti.hasKey("wkkit")) {
+			if(ItemEditer.hasWkKitTag(e.getItemInHand())) {
 				e.setCancelled(true);
 			}
 		}

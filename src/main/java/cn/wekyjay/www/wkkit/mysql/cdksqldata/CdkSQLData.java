@@ -14,7 +14,7 @@ public class CdkSQLData {
 	public static void createTable(){
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
-		String cmd = SQLCommand.CREATE_TABLE.commandToString();
+		String cmd = SQLCommand.CREATE_TABLE.format(MySQLManager.getTablePrefix());
 		try {
 			ps = connection.prepareStatement(cmd);
 			MySQLManager.get().doCommand(ps);
@@ -30,7 +30,7 @@ public class CdkSQLData {
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
 		try {
-			String s = SQLCommand.ADD_DATA.commandToString();
+			String s = SQLCommand.ADD_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setInt(1, 0);  // id
 			ps.setString(2, CDK);
@@ -50,7 +50,7 @@ public class CdkSQLData {
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
 		try {
-			String s = SQLCommand.DELETE_DATA.commandToString();
+			String s = SQLCommand.DELETE_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, CDK);
 			MySQLManager.get().doCommand(ps);
@@ -66,7 +66,7 @@ public class CdkSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_MARK.commandToString();
+			String s = SQLCommand.SELECT_MARK.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, mark);
 			rs = ps.executeQuery();
@@ -85,7 +85,7 @@ public class CdkSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_CDK.commandToString();
+			String s = SQLCommand.SELECT_CDK.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, cdk);
 			rs = ps.executeQuery();
@@ -104,7 +104,7 @@ public class CdkSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_CDK.commandToString();
+			String s = SQLCommand.SELECT_CDK.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, cdk);
 			rs = ps.executeQuery();
@@ -123,7 +123,7 @@ public class CdkSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_CDK.commandToString();
+			String s = SQLCommand.SELECT_CDK.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, cdk);
 			rs = ps.executeQuery();
@@ -142,7 +142,7 @@ public class CdkSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_CDK.commandToString();
+			String s = SQLCommand.SELECT_CDK.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, cdk);
 			rs = ps.executeQuery();
@@ -166,7 +166,7 @@ public class CdkSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_MARK.commandToString();
+			String s = SQLCommand.SELECT_MARK.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, mark);
 			rs = ps.executeQuery();
@@ -182,7 +182,7 @@ public class CdkSQLData {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String s = SQLCommand.SELECT_CDK.commandToString();
+			String s = SQLCommand.SELECT_CDK.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, CDK);
 			rs = ps.executeQuery();
@@ -203,7 +203,7 @@ public class CdkSQLData {
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
 		try {
-			String s = SQLCommand.UPDATE_STATUS_DATA.commandToString();
+			String s = SQLCommand.UPDATE_STATUS_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, playername);
 			ps.setString(2, CDK);
@@ -222,7 +222,7 @@ public class CdkSQLData {
 		Connection connection = MySQLManager.get().getConnection();
 		PreparedStatement ps = null;
 		try {
-			String s = SQLCommand.UPDATE_MARK_DATA.commandToString();
+			String s = SQLCommand.UPDATE_MARK_DATA.format(MySQLManager.getTablePrefix());
 			ps = connection.prepareStatement(s);
 			ps.setString(1, newmark);
 			ps.setString(2, mark);

@@ -7,9 +7,10 @@ import cn.wekyjay.www.wkkit.kit.Kit;
 import cn.wekyjay.www.wkkit.listeners.KitMenuListener;
 import cn.wekyjay.www.wkkit.tool.ItemEditer;
 import cn.wekyjay.www.wkkit.tool.WKTool;
-import de.tr7zw.changeme.nbtapi.NBTContainer;
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NbtApiException;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
@@ -74,7 +75,8 @@ public class MenuManager {
 					if(id.contains("[NBT]")) {
 						try {
 							id = id.substring(5);
-							item = NBTItem.convertNBTtoItem(new NBTContainer(id));
+							ReadWriteNBT nbt = NBT.parseNBT(id);
+							item = NBT.itemStackFromNBT(nbt);
 						}catch(NbtApiException e) {
 							e.printStackTrace();
 						}

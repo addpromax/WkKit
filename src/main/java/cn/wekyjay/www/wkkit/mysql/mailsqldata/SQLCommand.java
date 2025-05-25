@@ -3,7 +3,7 @@ package cn.wekyjay.www.wkkit.mysql.mailsqldata;
 enum SQLCommand {
 	// 创建表
 	CREATE_TABLE(
-			"CREATE TABLE IF NOT EXISTS `maildata` (" +
+			"CREATE TABLE IF NOT EXISTS `{table}` (" +
 					"`id` INT UNSIGNED AUTO_INCREMENT," +
 					"`player` VARCHAR(50) NOT NULL," +
 					"`kitname` VARCHAR(50) NOT NULL," +
@@ -15,7 +15,7 @@ enum SQLCommand {
 
 	// 添加数据
 	ADD_DATA(
-			"INSERT INTO `maildata` " +
+			"INSERT INTO `{table}` " +
 					"(`id`,`player`,`kitname`,`num`)" +
 					"VALUES (?, ?, ?, ?)"
 	),
@@ -43,5 +43,8 @@ enum SQLCommand {
 	}
 	public String commandToString() {
 		return command;
+	}
+	public String format(String prefix) {
+		return command.replace("{table}", prefix + "maildata");
 	}
 }

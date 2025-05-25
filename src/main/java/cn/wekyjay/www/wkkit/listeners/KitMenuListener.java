@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import static org.bukkit.event.inventory.InventoryAction.NOTHING;
 import static org.bukkit.event.inventory.InventoryAction.UNKNOWN;
 
+import cn.wekyjay.www.wkkit.tool.ItemEditer;
 
 public class KitMenuListener implements Listener{
 
@@ -38,9 +39,8 @@ public class KitMenuListener implements Listener{
 			Player p = Bukkit.getPlayer(e.getWhoClicked().getName());
 			//如果点击是空格子就取消事件
 			try {
-				NBTItem itemnbt = new NBTItem(e.getCurrentItem());
-				if(itemnbt.hasKey("wkkit")) {
-					String kitname = itemnbt.getString("wkkit");
+				if(ItemEditer.hasWkKitTag(e.getCurrentItem())) {
+					String kitname = ItemEditer.getWkKitTagValue(e.getCurrentItem());
 					Kit kit = Kit.getKit(kitname);
 					
 					// 如果是右键则预览礼包
