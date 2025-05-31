@@ -56,6 +56,7 @@ public class KitInfo implements Listener{
 	}
 	@EventHandler
 	public void onInventory(InventoryClickEvent e){
+		
 		// 确认是那个GUI
 		if(e.getInventory().getHolder() instanceof KitPreviewHolder) {
 			e.setCancelled(true);

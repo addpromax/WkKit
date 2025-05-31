@@ -22,17 +22,17 @@ enum SQLCommand {
 
 	// 更新领取次数数据
 	UPDATE_NUM_DATA(
-			"UPDATE `maildata` SET `num` = ? WHERE `player` = ? AND `kitname` = ? "
+			"UPDATE `{table}` SET `num` = ? WHERE `player` = ? AND `kitname` = ? "
 	),
 
 
 	// 删除数据
 	DELETE_DATA(
-			"DELETE FROM `maildata` WHERE `player` = ? AND `kitname` = ?"
+			"DELETE FROM `{table}` WHERE `player` = ? AND `kitname` = ?"
 	),
 
 	SELECT_DATA(
-			"SELECT * FROM `maildata` WHERE `player` = ?"
+			"SELECT * FROM `{table}` WHERE `player` = ?"
 	);
 
 
