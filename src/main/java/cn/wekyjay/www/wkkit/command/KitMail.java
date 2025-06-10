@@ -6,6 +6,7 @@ import cn.wekyjay.www.wkkit.invholder.MailHolder;
 import cn.wekyjay.www.wkkit.kit.Kit;
 import cn.wekyjay.www.wkkit.tool.WKTool;
 import cn.wekyjay.www.wkkit.tool.items.GlassPane;
+import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -54,6 +55,10 @@ public class KitMail{
 			Kit kit = Kit.getKit(kitname);
 			if(kit == null) continue;
 			ItemStack is = kit.getKitItem();
+			// 添加名称
+			NBT.modify(is, nbt -> {
+				nbt.setString("wkkit", kitname);
+			});
 			int kitNum = WkKit.getPlayerData().getMailKitNum(pname, kitname);
 			int maxsize = is.getMaxStackSize();
 			if(kitNum >= 1 && kitNum <= maxsize) {

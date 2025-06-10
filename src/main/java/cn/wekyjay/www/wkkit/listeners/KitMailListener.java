@@ -8,6 +8,7 @@ import cn.wekyjay.www.wkkit.command.KitMail;
 import cn.wekyjay.www.wkkit.config.LangConfigLoader;
 import cn.wekyjay.www.wkkit.invholder.MailHolder;
 import cn.wekyjay.www.wkkit.kit.Kit;
+import cn.wekyjay.www.wkkit.tool.ItemEditer;
 import cn.wekyjay.www.wkkit.tool.WKTool;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,11 +20,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static org.bukkit.event.inventory.InventoryAction.NOTHING;
 import static org.bukkit.event.inventory.InventoryAction.UNKNOWN;
@@ -55,14 +52,15 @@ public class KitMailListener implements Listener {
             }
             String name = e.getWhoClicked().getName();
             Player p = (Player) e.getWhoClicked();
-            if (e.getRawSlot() >= 8 & e.getRawSlot() <= 44 && WKTool.getItemNBT(e.getCurrentItem()).hasTag("wkkit") && WKTool.hasSpace(p, 1)) {
-                p.getInventory().addItem(new ItemStack[]{e.getCurrentItem()});
-                String kitname = WKTool.getItemNBT(e.getCurrentItem()).getString("wkkit");
-                PlayersReceiveKitEvent event = new PlayersReceiveKitEvent(p, Kit.getKit(kitname), ReceiveType.MAIL);
+            // 判断是否能领取
+            if (e.getRawSlot() >= 8 & e.getRawSlot() <= 44 && ItemEditer.hasWkKitTag(e.getCurrentItem()) && WKTool.hasSpace(p, 1)) {
+                p.getInventory().addItem(e.getCurrentItem());
+                String kitName = ItemEditer.getWkKitTagValue(e.getCurrentItem());
+                PlayersReceiveKitEvent event = new PlayersReceiveKitEvent(p, Kit.getKit(kitName), ReceiveType.MAIL);
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled())
                     return;
-                WkKit.getPlayerData().delMailToFile(name, kitname);
+                WkKit.getPlayerData().delMailToFile(name, kitName);
                 p.closeInventory();
                 (new KitMail()).openKitMail(p, 1);
                 return;
@@ -75,20 +73,20 @@ public class KitMailListener implements Listener {
             }
             if (set != null && !set.isEmpty()) {
                 if (e.getRawSlot() == 52) {
-                    if (!WKTool.hasSpace(p, Arrays.stream(e.getInventory().getContents()).filter(item->item != null).collect(Collectors.toList()).size() - 18)) {
+                    if (!WKTool.hasSpace(p, (int) Arrays.stream(e.getInventory().getContents()).filter(Objects::nonNull).count() - 18)) {
                         p.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GET_FAILED", ChatColor.YELLOW));
                         return;
                     }
                     for (ItemStack is : e.getInventory().getContents()) {
-                        if (is != null && WKTool.getItemNBT(is).hasTag("wkkit")) {
-                            String kitname = WKTool.getItemNBT(is).getString("wkkit");
+                        if (is != null && ItemEditer.hasWkKitTag(is)) {
+                            String kitName = ItemEditer.getWkKitTagValue(is);
                             // 回调事件
-                            PlayersReceiveKitEvent event = new PlayersReceiveKitEvent(p, Kit.getKit(kitname), ReceiveType.MAIL);
+                            PlayersReceiveKitEvent event = new PlayersReceiveKitEvent(p, Kit.getKit(kitName), ReceiveType.MAIL);
                             Bukkit.getPluginManager().callEvent(event);
                             // 如果没有取消
                             if (!event.isCancelled()) {
-                                p.getInventory().addItem(new ItemStack[]{is});
-                                WkKit.getPlayerData().delMailToFile(name, kitname);
+                                p.getInventory().addItem(is);
+                                WkKit.getPlayerData().delMailToFile(name, kitName);
                             }
                         }
                     }

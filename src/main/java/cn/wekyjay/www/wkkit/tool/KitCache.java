@@ -22,15 +22,14 @@ public class KitCache implements Listener{
 	private static KitCache cache = null;
 	private static List<String> cacheList = null;
 	private final static String CACHEPATH = WkKit.getWkKit().getDataFolder().getAbsolutePath() + File.separatorChar + "Caches";
-	private boolean isEnable = false;
-	
-	// 动态获取静态的Cache对象
+
+    // 动态获取静态的Cache对象
 	public static KitCache getCache() {
 		return cache == null? cache = new KitCache() : cache;
 	}
 	
 	public KitCache() {
-		isEnable = WkKit.getWkKit().getConfig().getBoolean("Cache.Enable");
+        boolean isEnable = WkKit.getWkKit().getConfig().getBoolean("Cache.Enable");
 		if(isEnable) {
 			WkKit.getWkKit().getLogger().info(LangConfigLoader.getString("LOG_MANAGE_ENABLE"));
 			Bukkit.getPluginManager().registerEvents(this, WkKit.getWkKit());
@@ -66,7 +65,7 @@ public class KitCache implements Listener{
 				ra.write("\n".getBytes("UTF-8"));
 			}
 			ra.close();
-			String msg = LangConfigLoader.getString("LOG_SAVED").replace("{path}", "Caches\\"+filename+".log");
+			String msg = "Log caches has been saved in Caches\\"+filename+".log";
 			WkKit.getWkKit().getLogger().info(msg);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

@@ -15,7 +15,6 @@ import cn.wekyjay.www.wkkit.tool.WKTool;
 import cn.wekyjay.www.wkkit.tool.items.GlassPane;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -232,7 +231,8 @@ public class EditKit implements Listener {
 			if(slot.contains(i)) {
 				ItemStack is = GlassPane.DEFAULT.getItemStack();
 				ItemMeta im = is.getItemMeta();
-				im.setDisplayName(LangConfigLoader.getString("DO_NOT_TOUCH"));
+                assert im != null;
+                im.setDisplayName(LangConfigLoader.getString("DO_NOT_TOUCH"));
 				is.setItemMeta(im);
 				kitinv.setItem(i, is);
 				continue;
@@ -240,11 +240,13 @@ public class EditKit implements Listener {
 			if(i == 1) {
 				ItemStack is = GlassPane.BLACK.getItemStack();
 				ItemMeta im = is.getItemMeta();
-				im.setDisplayName(LangConfigLoader.getString("EDIT_BACK"));
+                assert im != null;
+                im.setDisplayName(LangConfigLoader.getString("EDIT_BACK"));
 				is.setItemMeta(im);
-				ReadWriteNBT nbti = NBT.itemStackToNBT(is);
-				nbti.setString("wkkit", kitname);
-				kitinv.setItem(i, NBT.itemStackFromNBT(nbti));
+				NBT.modify(is, nbt -> {
+					nbt.setString("wkkit", kitname);
+				});
+				kitinv.setItem(i, is);
 				continue;
 			}
 			if(i == 4) {
@@ -254,13 +256,13 @@ public class EditKit implements Listener {
 			if(i == 7) {
 				ItemStack is = GlassPane.RED.getItemStack();
 				ItemMeta im = is.getItemMeta();
-				im.setDisplayName(LangConfigLoader.getString("EDIT_DELETE_KIT"));
+                assert im != null;
+                im.setDisplayName(LangConfigLoader.getString("EDIT_DELETE_KIT"));
 				is.setItemMeta(im);
-
-				ReadWriteNBT nbti = NBT.itemStackToNBT(is);
-				nbti.setString("wkkit", kitname);
-				kitinv.setItem(i, NBT.itemStackFromNBT(nbti));
-				continue;
+				NBT.modify(is, nbt -> {
+					nbt.setString("wkkit", kitname);
+				});
+				kitinv.setItem(i, is);
 			}
 		}
 		// 添加flag
@@ -278,18 +280,21 @@ public class EditKit implements Listener {
 				if(obj instanceof List) im.setLore((List<String>)obj);
 				if(obj instanceof ItemStack[]) im.setLore(Arrays.asList(LangConfigLoader.getString("EDIT_CLICK_EDIT")));
 				is.setItemMeta(im);
-				ReadWriteNBT nbti = NBT.itemStackToNBT(is);
-				nbti.setString("wkkit", key);
-				kitinv.setItem(hasflags.get(hascount), NBT.itemStackFromNBT(nbti));
+				NBT.modify(is, nbt -> {
+					nbt.setString("wkkit", key);
+				});
+				kitinv.setItem(hasflags.get(hascount),is);
 				hascount++;
 			}else {
 				ItemStack is = new ItemStack(Material.NAME_TAG); // 可能会报错
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName("§e§l[§a§l+§e§l]§f§l " + key);
 				is.setItemMeta(im);
-				ReadWriteNBT nbti = NBT.itemStackToNBT(is);
-				nbti.setString("wkkit", key);
-				kitinv.setItem(nonflags.get(noncount), NBT.itemStackFromNBT(nbti));
+				is.setItemMeta(im);
+				NBT.modify(is, nbt -> {
+					nbt.setString("wkkit", kitname);
+				});
+				kitinv.setItem(hasflags.get(hascount),is);
 				noncount++;
 			}
 			
@@ -312,17 +317,17 @@ public class EditKit implements Listener {
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(LangConfigLoader.getString("EDIT_SAVE"));
 				is.setItemMeta(im);
-				ReadWriteNBT nbti = NBT.itemStackToNBT(is);
-				nbti.setString("wkkit", kitname);
-				kitinv.setItem(i, NBT.itemStackFromNBT(nbti));
+				NBT.modify(is, nbt -> {
+					nbt.setString("wkkit", kitname);
+				});
+				kitinv.setItem(i, is);
 				continue;
 			}else {
 				ItemStack is = GlassPane.DEFAULT.getItemStack();
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(LangConfigLoader.getString("DO_NOT_TOUCH"));
 				is.setItemMeta(im);
-				ReadWriteNBT nbti = NBT.itemStackToNBT(is);
-				kitinv.setItem(i, NBT.itemStackFromNBT(nbti));
+				kitinv.setItem(i, is);
 				continue;
 			}
 		}
@@ -363,7 +368,7 @@ public class EditKit implements Listener {
 		        String kitname = ItemEditer.getWkKitTagValue(e.getCurrentItem());
 		        if (kitname != null) {
 		            Inventory inv = editGroup(kitname, Integer.valueOf(ItemEditer.getWkKitTagValue(e.getCurrentItem())).intValue() - 1);
-		        e.getWhoClicked().openInventory(inv);
+		        	e.getWhoClicked().openInventory(inv);
 		        }
 		        return;
 		      } 
@@ -381,35 +386,35 @@ public class EditKit implements Listener {
 			e.setCancelled(true);
 			if(e.getAction().equals(NOTHING) || e.getAction().equals(UNKNOWN)) return;
 			if( ItemEditer.hasWkKitTag(e.getCurrentItem()) && e.getClick().equals(ClickType.LEFT)) {
-				String kitname = ItemEditer.getWkKitTagValue(e.getInventory().getItem(1));
-				if (kitname != null) {
+				String kitName = ItemEditer.getWkKitTagValue(e.getInventory().getItem(1));
+				if (kitName != null) {
 					String key = ItemEditer.getWkKitTagValue(e.getCurrentItem());
 					if (key != null) {
 						if(e.getRawSlot() == 1) {
-							String groupname = KitGroupManager.getContainName(Kit.getKit(kitname));
-							if (groupname != null) {
-								e.getWhoClicked().openInventory(this.editGroup(groupname, 1));
+							String groupName = KitGroupManager.getContainName(Kit.getKit(kitName));
+							if (groupName != null) {
+								e.getWhoClicked().openInventory(this.editGroup(groupName, 1));
 								return;
 							}
 						}
 				if(e.getRawSlot() == 7) {
 					e.getWhoClicked().closeInventory();
-					KitDeletePrompt.newConversation((Player)e.getWhoClicked(), kitname);
+					KitDeletePrompt.newConversation((Player)e.getWhoClicked(), kitName);
 					return;
 				}
-				if(key.equals("DisplayName")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "DisplayName");return;}
-				if(key.equals("Icon")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Icon");return;}
-				if(key.equals("Times")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Times");return;}
-				if(key.equals("Delay")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Delay");return;}
-				if(key.equals("Permission")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Permission");return;}
-				if(key.equals("DoCron")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "DoCron");return;}
-				if(key.equals("Commands")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Commands");return;}
-				if(key.equals("Lore")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Lore");return;}
-				if(key.equals("Drop")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Drop");return;}
-				if(key.equals("Vault")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "Vault");return;}
-				if(key.equals("NoRefreshFirst")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "NoRefreshFirst");return;}
-				if(key.equals("MythicMobs")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitname, "MythicMobs");return;}
-				if(key.equals("Item")) {e.getWhoClicked().openInventory(this.editKitItem(kitname));return;}
+				if(key.equals("DisplayName")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "DisplayName");return;}
+				if(key.equals("Icon")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "Icon");return;}
+				if(key.equals("Times")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "Times");return;}
+				if(key.equals("Delay")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "Delay");return;}
+				if(key.equals("Permission")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "Permission");return;}
+				if(key.equals("DoCron")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "DoCron");return;}
+				if(key.equals("Commands")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "Commands");return;}
+				if(key.equals("Lore")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "Lore");return;}
+				if(key.equals("Drop")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "Drop");return;}
+				if(key.equals("Vault")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "Vault");return;}
+				if(key.equals("NoRefreshFirst")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "NoRefreshFirst");return;}
+				if(key.equals("MythicMobs")) {e.getWhoClicked().closeInventory();KitFlagPrompt.setFlag((Player)e.getWhoClicked(), kitName, "MythicMobs");return;}
+				if(key.equals("Item")) {e.getWhoClicked().openInventory(this.editKitItem(kitName));return;}
 			}
 				}
 			}
@@ -444,9 +449,9 @@ public class EditKit implements Listener {
 			if(e.getRawSlot() > 35 && e.getRawSlot() < 45) {
 				e.setCancelled(true);
 				if(e.getRawSlot() == 40) {
-					String kitname = ItemEditer.getWkKitTagValue(e.getCurrentItem());
-					if (kitname != null) {
-						Kit kit = Kit.getKit(kitname);
+					String kitName = ItemEditer.getWkKitTagValue(e.getCurrentItem());
+					if (kitName != null) {
+						Kit kit = Kit.getKit(kitName);
 						if (kit != null) {
 					List<ItemStack> list = new ArrayList<ItemStack>();
 					for(int i = 0;i < 36; i++) {
