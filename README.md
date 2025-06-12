@@ -1,4 +1,6 @@
-# WkKit ![WkKit Logo](https://img.shields.io/badge/Minecraft-Plugin-blue?style=flat-square) ![Version](https://img.shields.io/badge/version-1.4.0-green?style=flat-square) ![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)
+# WkKit 
+
+![WkKit Logo](https://img.shields.io/badge/Minecraft-Plugin-blue?style=flat-square) ![Version](https://img.shields.io/badge/version-1.4.0-green?style=flat-square) ![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/WekyJay/WkKit)
 
 > **高效、强大、可定制的Minecraft礼包管理插件**
 
