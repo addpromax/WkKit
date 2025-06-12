@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
   <groupId>cn.wekyjay.www</groupId>
   <artifactId>WkKit</artifactId>
-  <version>1.4.2</version>
+  <version>1.4.3</version>
 	<properties>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -29,7 +29,7 @@
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-shade-plugin</artifactId>
-			<version>3.2.4</version>
+			<version>3.6.0</version>
 			<executions>
 				<execution>
 					<phase>package</phase>
@@ -37,21 +37,34 @@
 						<goal>shade</goal>
 					</goals>
 					<configuration>
-						<minimizeJar>true</minimizeJar>
 						<artifactSet>
 							<includes>
 								<include>com.cronutils</include>
 								<include>com.alibaba</include>
 								<include>de.tr7zw</include>
+								<include>cn.handyplus.lib.adapter:*:*:*</include>
 							</includes>
 						</artifactSet>
-						<createDependencyReducedPom>true</createDependencyReducedPom>
+						<createDependencyReducedPom>false</createDependencyReducedPom>
 						<relocations>
 							<relocation>
+								<pattern>com.cronutils</pattern>
+								<shadedPattern>cn.wekyjay.www.wkkit.lib.cronutils</shadedPattern>
+							</relocation>
+							<relocation>
+								<pattern>com.alibaba.druid</pattern>
+								<shadedPattern>cn.wekyjay.www.wkkit.lib.alibaba</shadedPattern>
+							</relocation>
+							<relocation>
 								<pattern>de.tr7zw.changeme.nbtapi</pattern>
-								<shadedPattern>shade.de.tr7zw.changeme.nbtapi</shadedPattern>
+								<shadedPattern>cn.wekyjay.www.wkkit.lib.nbtapi</shadedPattern>
+							</relocation>
+							<relocation>
+								<pattern>cn.handyplus.lib.adapter</pattern>
+								<shadedPattern>cn.wekyjay.www.wkkit.lib.folialib</shadedPattern>
 							</relocation>
 						</relocations>
+
 					</configuration>
 				</execution>
 			</executions>
@@ -90,7 +103,12 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.21.4-R0.1-SNAPSHOT</version>
+			<version>1.21.5-R0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.handyplus.lib.adapter</groupId>
+			<artifactId>FoliaLib</artifactId>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>de.tr7zw</groupId>

@@ -1,8 +1,8 @@
 package cn.wekyjay.www.wkkit.mysql.mailsqldata;
 
+import cn.wekyjay.www.wkkit.config.LangConfigLoader;
 import cn.wekyjay.www.wkkit.mysql.MySQLManager;
 import cn.wekyjay.www.wkkit.tool.MessageManager;
-import cn.wekyjay.www.wkkit.config.LangConfigLoader;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,7 +1,7 @@
 package cn.wekyjay.www.wkkit.edit.prompt;
 
+import cn.handyplus.lib.adapter.PlayerSchedulerUtil;
 import cn.wekyjay.www.wkkit.WkKit;
-import org.bukkit.Bukkit;
 import org.bukkit.conversations.*;
 import org.bukkit.entity.Player;
 
@@ -31,9 +31,9 @@ class KitDeletePrompt_1 extends ValidatingPrompt{
 	@Override
 	protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 		if(input.equalsIgnoreCase("Y")) {
-			Bukkit.getScheduler().runTask(WkKit.getWkKit(),()->{
-				Bukkit.dispatchCommand((Player)context.getForWhom(), "wk delete " + context.getSessionData("kitname"));
-			});
+
+			PlayerSchedulerUtil.performCommand((Player)context.getForWhom(), "wk delete " + context.getSessionData("kitname"));
+
 			context.getForWhom().sendRawMessage("§a已成功删除礼包 - " + context.getSessionData("kitname"));
 		}else {
 			context.getForWhom().sendRawMessage("§c你取消了礼包删除");

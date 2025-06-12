@@ -1,14 +1,15 @@
 package cn.wekyjay.www.wkkit.kit;
 
+import cn.handyplus.lib.adapter.PlayerSchedulerUtil;
 import cn.wekyjay.www.wkkit.WkKit;
 import cn.wekyjay.www.wkkit.api.PlayersReceiveKitEvent;
 import cn.wekyjay.www.wkkit.api.ReceiveType;
 import cn.wekyjay.www.wkkit.config.LangConfigLoader;
 import cn.wekyjay.www.wkkit.hook.MythicMobsHooker;
 import cn.wekyjay.www.wkkit.hook.VaultHooker;
+import cn.wekyjay.www.wkkit.tool.CronManager;
 import cn.wekyjay.www.wkkit.tool.MessageManager;
 import cn.wekyjay.www.wkkit.tool.WKTool;
-import cn.wekyjay.www.wkkit.tool.CronManager;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -74,7 +75,7 @@ public class KitGetter{
 		if(kit.getVault() != null) {if(!this.runVault(kit,p)){return false;}}
 
 		// 以下代码可以安全执行
-		if(kit.getCommands() != null) {this.runCommands(kit, p);}
+		if(kit.getCommands() != null) { this.runCommands(kit, p);}
 		if(kit.getMythicMobs() != null) {this.runMythicMobs(kit,p);}
 		this.getSuccess(kit, p);
 		return true;
@@ -96,13 +97,11 @@ public class KitGetter{
 			}
 			//根据不同的指令发送方式发送
 			if(splitstr[0].equalsIgnoreCase("cmd")) {
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+				PlayerSchedulerUtil.dispatchCommand(command);
 			}else if(splitstr[0].equalsIgnoreCase("op") && !p.isOp()) {
-				p.setOp(true);
-				Bukkit.dispatchCommand(p, command);
-				p.setOp(false);
+				PlayerSchedulerUtil.performOpCommand(p, command);
 			}else {
-				p.performCommand(command);
+				PlayerSchedulerUtil.performCommand(p,command);
 			}
 		}
 	}

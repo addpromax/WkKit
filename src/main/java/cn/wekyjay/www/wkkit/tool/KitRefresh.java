@@ -4,23 +4,10 @@ import cn.wekyjay.www.wkkit.WkKit;
 import cn.wekyjay.www.wkkit.kit.Kit;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Calendar;
 
 public class KitRefresh {
-	private static BukkitTask task = null;
-	
-	public static BukkitTask getTask() {
-		return task;
-	}
-	
-	/**
-	 * 取消当前礼包自刷新线程
-	 */
-	public static void cancelTask() {
-		task.cancel();
-	}
 		
 	/**
 	 * 将时间值转为毫秒

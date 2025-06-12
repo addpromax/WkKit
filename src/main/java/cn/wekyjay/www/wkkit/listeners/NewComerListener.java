@@ -1,5 +1,6 @@
 package cn.wekyjay.www.wkkit.listeners;
 
+import cn.handyplus.lib.adapter.HandySchedulerUtil;
 import cn.wekyjay.www.wkkit.WkKit;
 import cn.wekyjay.www.wkkit.kit.Kit;
 import cn.wekyjay.www.wkkit.tool.WKTool;
@@ -7,7 +8,6 @@ import org.bukkit.Statistic;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class NewComerListener implements Listener {
 	WkKit wk = WkKit.getWkKit();
@@ -28,23 +28,20 @@ public class NewComerListener implements Listener {
 					&& e.getPlayer().getStatistic(Statistic.LEAVE_GAME) > 0) return;
 	    	if(WkKit.getPlayerData().contain_Kit(pname, nckitname))return;
 
-	    	new BukkitRunnable() {
-				@Override
-				public void run() {
-			    	if(isauto) {
-			    		if (mode == 1){
-							e.getPlayer().getInventory().addItem(nckit.getKitItem());
-						}else {
-							WKTool.addItem(e.getPlayer(),nckit.getItemStacks());
-						}
-						WkKit.getPlayerData().setKitToFile(pname, nckitname, "false", 0);
-			    	}else {
-				    	WkKit.getPlayerData().setKitToFile(pname, nckitname, "true", 1);
-			    	}
-					
+			HandySchedulerUtil.runTaskLater(()->{
+				if(isauto) {
+					if (mode == 1){
+						e.getPlayer().getInventory().addItem(nckit.getKitItem());
+					}else {
+						WKTool.addItem(e.getPlayer(),nckit.getItemStacks());
+					}
+					WkKit.getPlayerData().setKitToFile(pname, nckitname, "false", 0);
+				}else {
+					WkKit.getPlayerData().setKitToFile(pname, nckitname, "true", 1);
 				}
-			}.runTaskLater(wk, 20L);
-	    } 
+
+			},20L);
+	    }
 	    
 	  }
 }

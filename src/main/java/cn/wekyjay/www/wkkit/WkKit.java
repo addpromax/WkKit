@@ -1,6 +1,7 @@
 package cn.wekyjay.www.wkkit;
 
 
+import cn.handyplus.lib.adapter.HandySchedulerUtil;
 import cn.wekyjay.www.wkkit.command.KitInfo;
 import cn.wekyjay.www.wkkit.command.TabCompleter;
 import cn.wekyjay.www.wkkit.config.ConfigManager;
@@ -26,12 +27,7 @@ import cn.wekyjay.www.wkkit.tool.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.messaging.PluginMessageListener;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
-public class WkKit extends JavaPlugin implements PluginMessageListener {
+public class WkKit extends JavaPlugin {
 
     /*声明静态属性*/
     public static File playerConfigFile;
@@ -54,7 +50,9 @@ public class WkKit extends JavaPlugin implements PluginMessageListener {
     public static FileConfiguration CDKConfig;
     private static PlayerData playerdata = null;
     private static CdkData cdkdata = null;
-    private static BukkitTask antiShutDownTask = null;
+
+
+
     // 初始化数据
     public static PlayerData getPlayerData() {
         if(WkKit.wkkit.getConfig().getString("MySQL.Enable").equalsIgnoreCase("true")) {
@@ -71,7 +69,7 @@ public class WkKit extends JavaPlugin implements PluginMessageListener {
 
 
     /*创建一个可调用本类的方法的Getter*/
-    public static WkKit wkkit;
+    private static WkKit wkkit;
     public static WkKit getWkKit() {
         return wkkit;
     }
@@ -81,6 +79,8 @@ public class WkKit extends JavaPlugin implements PluginMessageListener {
     @Override
     public void onEnable() {
         wkkit = this;//为Getter赋值为本类
+        // 初始化FoliaLib适配
+        HandySchedulerUtil.init(this);
         saveDefaultConfig();//初始化Config文件
 
         reloadConfig();
@@ -178,24 +178,16 @@ public class WkKit extends JavaPlugin implements PluginMessageListener {
 
         //Check Version
         if(getConfig().contains("Setting.CheckUpdate") && getConfig().getBoolean("Setting.CheckUpdate")) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    new ChackPluginVersion();
-                }
-            }.runTaskAsynchronously(this);
+            HandySchedulerUtil.runTaskAsynchronously(ChackPluginVersion::new);
         }
 
         // 启动数据库
         if(Objects.requireNonNull(WkKit.wkkit.getConfig().getString("MySQL.Enable")).equalsIgnoreCase("true")) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
+            HandySchedulerUtil.runTaskAsynchronously(()-> {
                     MySQLManager.get().enableMySQL();
                     MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("KIT_NUM") + Kit.getKits().size());
                     MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("MENU_NUM") + MenuManager.getInvs().size());
-                }
-            }.runTaskAsynchronously(this);
+            });
         }else {
             MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("KIT_NUM") + Kit.getKits().size());
             MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("MENU_NUM") + MenuManager.getInvs().size());
@@ -240,30 +232,21 @@ public class WkKit extends JavaPlugin implements PluginMessageListener {
      * 启用防崩服记录线程启用
      */
     public void enableAntiShutDown() {
-        if(antiShutDownTask != null) antiShutDownTask.cancel();
         if(this.getConfig().getInt("Default.AntiShutDown") == 0) return;
         long ticks = 20L * this.getConfig().getInt("Default.AntiShutDown") * 60;
         // 放入线程
-        antiShutDownTask = new BukkitRunnable() {
-            @Override
-            public void run() {
-                File file = new File(WkKit.getWkKit().getDataFolder(),"config.yml");
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                YamlConfiguration fileYaml = YamlConfiguration.loadConfiguration(file);
-                fileYaml.set("Default.ShutDate", sdf.format(new Date()));
-                try {
-                    fileYaml.save(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+        HandySchedulerUtil.runTaskTimer(() -> {
+            File file = new File(WkKit.getWkKit().getDataFolder(), "config.yml");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            YamlConfiguration fileYaml = YamlConfiguration.loadConfiguration(file);
+            fileYaml.set("Default.ShutDate", sdf.format(new Date()));
+            try {
+                fileYaml.save(file);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }.runTaskTimerAsynchronously(WkKit.getWkKit(), 20, ticks);
+        }, 20, ticks);
 
     }
 
-    @Override
-    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
-
-    }
 }

@@ -9,8 +9,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.wekyjay.www.wkkit.tool.WKTool;
-
 public class ItemEditer {
 	private ItemStack itemStack;
 	public ItemEditer(ItemStack itemStack) {

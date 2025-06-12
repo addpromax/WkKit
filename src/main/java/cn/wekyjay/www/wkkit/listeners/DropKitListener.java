@@ -1,13 +1,12 @@
 package cn.wekyjay.www.wkkit.listeners;
 
+import cn.handyplus.lib.adapter.PlayerSchedulerUtil;
 import cn.wekyjay.www.wkkit.config.LangConfigLoader;
 import cn.wekyjay.www.wkkit.hook.MythicMobsHooker;
 import cn.wekyjay.www.wkkit.kit.Kit;
 import cn.wekyjay.www.wkkit.tool.CountDelayTime;
-import cn.wekyjay.www.wkkit.tool.WKTool;
 import cn.wekyjay.www.wkkit.tool.ItemEditer;
-import de.tr7zw.changeme.nbtapi.NBTItem;
-import org.bukkit.Bukkit;
+import cn.wekyjay.www.wkkit.tool.WKTool;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,7 +16,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Iterator;
 import java.util.List;
@@ -90,15 +88,14 @@ public class DropKitListener implements Listener{
 								}
 								//根据不同的指令发送方式发送
 								if(splitstr[0].equalsIgnoreCase("cmd")) {
-									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+									PlayerSchedulerUtil.dispatchCommand(command);
 								}else if(splitstr[0].equalsIgnoreCase("op") && !e.getPlayer().isOp()) {
-									e.getPlayer().setOp(true);
-									Bukkit.dispatchCommand(e.getPlayer(), command);
-									e.getPlayer().setOp(false);
+									PlayerSchedulerUtil.performOpCommand(e.getPlayer(), command);
 								}else {
-									e.getPlayer().performCommand(command);
+									PlayerSchedulerUtil.performCommand(e.getPlayer(), command);
 								}
 							}
+
 						}
 						// 判断是否有MythicMobs生成
 						if (kit.getMythicMobs() != null){

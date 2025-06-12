@@ -5,20 +5,19 @@ import cn.wekyjay.www.wkkit.config.LangConfigLoader;
 import cn.wekyjay.www.wkkit.listeners.ChackPluginListener;
 import com.alibaba.druid.support.json.JSONParser;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
-import static cn.wekyjay.www.wkkit.WkKit.wkkit;
 
 public class ChackPluginVersion{
 
+	private static final WkKit wkkit = WkKit.getWkKit();
 
 	private static Map<String, Object> resourceInfo = null;
 

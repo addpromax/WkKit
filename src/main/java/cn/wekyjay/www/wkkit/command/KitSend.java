@@ -1,5 +1,6 @@
 package cn.wekyjay.www.wkkit.command;
 
+import cn.handyplus.lib.adapter.HandySchedulerUtil;
 import cn.wekyjay.www.wkkit.WkKit;
 import cn.wekyjay.www.wkkit.api.PlayersReceiveKitEvent;
 import cn.wekyjay.www.wkkit.api.ReceiveType;
@@ -44,17 +45,16 @@ public  class KitSend {
 		if(Kit.getKit(kitname) != null) {
 			// 异步执行判断
 			int finalKitnum = kitnum;
-			Bukkit.getScheduler().runTaskAsynchronously(wk,()->{
+			HandySchedulerUtil.runTaskAsynchronously(() ->{
 				//发放实体礼包给：@all
 				if(target.equalsIgnoreCase("@All")) {
 					OfflinePlayer[] playerlist = Bukkit.getOfflinePlayers();
 					for(OfflinePlayer player : playerlist) {
 						if (player != null && player instanceof OfflinePlayer) {
 							String pname = player.getName();
-							// 回调事件(异步中调用同步任务)
-							Bukkit.getScheduler().runTask(wk,()->{
-								if(PlayersReceiveKitEvent.callEvent(player.getPlayer(),pname,Kit.getKit(kitname), ReceiveType.SEND).isCancelled()) return;
-							});
+
+							if(PlayersReceiveKitEvent.callEvent(player.getPlayer(),pname,Kit.getKit(kitname), ReceiveType.SEND).isCancelled()) return;
+
 							if(WkKit.getPlayerData().contain_Mail(pname,kitname)) {
 								int num = WkKit.getPlayerData().getMailKitNum(pname, kitname);
 								WkKit.getPlayerData().setMailNum(pname, kitname, num + finalKitnum);
@@ -76,9 +76,9 @@ public  class KitSend {
 							String pname = player.getName();
 							if(player.isOnline()) {//判断是否在线
 								// 回调事件
-								Bukkit.getScheduler().runTask(wk,()->{
-									if(PlayersReceiveKitEvent.callEvent(player.getPlayer(),pname,Kit.getKit(kitname), ReceiveType.SEND).isCancelled()) return;
-								});
+
+								if(PlayersReceiveKitEvent.callEvent(player.getPlayer(),pname,Kit.getKit(kitname), ReceiveType.SEND).isCancelled()) return;
+
 								if(WkKit.getPlayerData().contain_Mail(pname,kitname)) {
 									int num = WkKit.getPlayerData().getMailKitNum(pname, kitname);
 									WkKit.getPlayerData().setMailNum(pname, kitname, num + finalKitnum);

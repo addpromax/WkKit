@@ -10,13 +10,11 @@ import cn.wekyjay.www.wkkit.kit.Kit;
 import cn.wekyjay.www.wkkit.tool.CronManager;
 import cn.wekyjay.www.wkkit.tool.MessageManager;
 import cn.wekyjay.www.wkkit.tool.WKTool;
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -89,11 +87,8 @@ public class MenuOpenner {
 								return; // 跳过首次刷新
 							}
 							
-							// 异步中同步回调
-							Bukkit.getScheduler().callSyncMethod(WkKit.getWkKit(), () -> {
-								PlayersKitRefreshEvent.callEvent(p, kit); // 回调
-								return true;
-							});
+							// 回调玩家接收礼包
+							PlayersKitRefreshEvent.callEvent(p, kit); // 回调
 							
 							// 更新礼包状态
 							if(WkKit.getPlayerData() instanceof PlayerData_MySQL) {
