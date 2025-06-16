@@ -138,6 +138,8 @@ PLUGIN_CHACKUPDATE_FAILED: '§4检查更新失败，请检查您的网络！'
 PLUGIN_CHACKUPDATE_IN: '§a正在进行检查更新...'
 PLUGIN_CHACKUPDATE_ED: '§a您的WkKit是最新版本！'
 PLUGIN_CHACKUPDATE_BACKWARD: '您的WkKit已经落后了 &c{num}&f 个版本！'
+PLUGIN_CHACKUPDATE_CONFIRM: "检测到新版本，输入/wk update 立即更新插件！"
+PLUGIN_CHACKUPDATE_NOTNEED: "当前已是最新版本，无需更新。"
 LOG_MANAGE_ENABLE: '日志管理已开启，所有操作将被记录至logs文件夹'
 LOG_MANAGE_DISABLE: '日志管理已关闭'
 LOG_MANAGE_SAVE: '日志已保存至logs文件夹'
@@ -151,3 +153,13 @@ LOG_MANAGE_IMPORT: '日志已导入'
 LOG_MANAGE_BACKUP: '日志已备份'
 LOG_MANAGE_RESTORE: '日志已恢复'
 LOG_MANAGE_FAILED: '日志操作失败'
+PLUGIN_UPDATE_DOWNLOAD_SUCCESS: "插件新版本已下载到："
+PLUGIN_UPDATE_RESTART_TIP: "请重启服务器以完成插件更新！"
+PLUGIN_UPDATE_PATH_NOTFOUND: "自动更新失败：找不到目标文件路径"
+PLUGIN_UPDATE_IO_ERROR: "自动更新失败：下载或写入文件出错"
+PLUGIN_UPDATE_RESTART_SUCCESS: "插件已自动重启！"
+PLUGIN_UPDATE_RESTART_FAIL: "尝试重启失败!"
+PLUGIN_UPDATE_DELETE_OLD_SUCCESS: "已删除原插件文件："
+PLUGIN_UPDATE_DELETE_OLD_FAIL: "删除原插件文件失败："
+PLUGIN_UPDATE_START: "检测到新版本，正在自动下载更新..."
+PLUGIN_UPDATE_DELETE_OLD_ERROR: "获取或删除原插件文件失败："

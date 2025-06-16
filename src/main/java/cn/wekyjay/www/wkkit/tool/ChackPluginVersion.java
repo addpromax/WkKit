@@ -5,13 +5,10 @@ import cn.wekyjay.www.wkkit.config.LangConfigLoader;
 import cn.wekyjay.www.wkkit.listeners.ChackPluginListener;
 import com.alibaba.druid.support.json.JSONParser;
 import org.bukkit.Bukkit;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Map;
 
 
@@ -21,6 +18,9 @@ public class ChackPluginVersion{
 
 	private static Map<String, Object> resourceInfo = null;
 
+	private static boolean needUpdate = false;
+	public static void setNeedUpdate(boolean value) { needUpdate = value; }
+	public static boolean isNeedUpdate() { return needUpdate; }
 
 	public static Map<String, Object> getResourceInfo() {
 		return resourceInfo;
@@ -40,6 +40,8 @@ public class ChackPluginVersion{
 		}
 
 	}
+
+
 
 
 	public Map<String,Object> getResourceInfo(String path){
@@ -100,18 +102,82 @@ public class ChackPluginVersion{
 
 	public void runCheck() {
         if(resourceInfo == null) {return;}
-		String lver = resourceInfo.get("name").toString();
-        if(!WkKit.getWkKit().getDescription().getVersion().equals(lver)) { //判断版本是否与最新版本不同
-			// 提示下载链接
-			MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_CHACKUPDATE_LINK") + "https://www.spigotmc.org/resources/%E2%9C%A8wkkit%E2%9C%A8-will-be-your-forever-gift-plugin-1-7-10-support-1-20-4%E2%9C%85.98415/");
-			// 提示最新版本
-        	MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_CHACKUPDATE_LATESTVERSION") + lver + " "
-					+ LangConfigLoader.getString("PLUGIN_CHACKUPDATE_CURRENTVERSION") + WkKit.getWkKit().getDescription().getVersion()
-			);
+        String lver = resourceInfo.get("name").toString();
+        String curVer = WkKit.getWkKit().getDescription().getVersion();
+        if(WKTool.compareVersion(curVer, lver) < 0) {
+            setNeedUpdate(true);
+            MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_CHACKUPDATE_LINK") + "https://www.spigotmc.org/resources/wkkit.98415/");
+            MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_CHACKUPDATE_LATESTVERSION") + lver + " "
+                    + LangConfigLoader.getString("PLUGIN_CHACKUPDATE_CURRENTVERSION") + curVer
+            );
+            MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_CHACKUPDATE_CONFIRM"));
         }else {
-        	MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_CHACKUPDATE_ED"));
+            setNeedUpdate(false);
+            MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_CHACKUPDATE_ED"));
         }
 	}
+
+    /**
+     * 自动下载并替换插件jar
+     */
+    public void autoUpdatePlugin() {
+        String downloadUrl = "https://api.spiget.org/v2/resources/98415/download";
+        // 目标路径：plugins/WkKit-新版本号.jar
+        String pluginsDir = wkkit.getDataFolder().getParentFile().getAbsolutePath();
+        String newJarName = "WkKit-" + resourceInfo.get("name") + ".jar";
+        File targetFile = new File(pluginsDir +"/"+ newJarName);
+        MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UPDATE_START"));
+        try {
+            File currentJar = new File(wkkit.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+			// 获取文件真实名称
+			String currentJarName = currentJar.getName();
+			// 获取真文件路径
+			String currentJarPath = pluginsDir + "/" +currentJarName;
+			File currentJarFile = new File(currentJarPath);
+			// 删除当前jar
+			if (currentJarFile.exists()) {
+				if (currentJarFile.delete()) {
+					MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UPDATE_DELETE_OLD_SUCCESS") + currentJarFile.getName());
+				} else {
+					MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UPDATE_DELETE_OLD_FAIL") + currentJarFile.getName());
+				}
+			}
+
+        } catch (Exception e) {
+            MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UPDATE_DELETE_OLD_ERROR") + e.getMessage());
+        }
+        int byteread = 0;
+        try {
+            URL url = new URL(downloadUrl);
+            URLConnection conn = url.openConnection();
+            InputStream inStream = conn.getInputStream();
+            FileOutputStream fs = new FileOutputStream(targetFile);
+            byte[] buffer = new byte[1204];
+            while ((byteread = inStream.read(buffer)) != -1) {
+                fs.write(buffer, 0, byteread);
+            }
+            fs.close();
+            inStream.close();
+            MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UPDATE_DOWNLOAD_SUCCESS") + targetFile.getAbsolutePath());
+            MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UPDATE_RESTART_TIP"));
+
+        } catch (FileNotFoundException e) {
+            MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UPDATE_PATH_NOTFOUND"));
+            e.printStackTrace();
+        } catch (IOException e) {
+            MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_UPDATE_IO_ERROR"));
+            e.printStackTrace();
+        }
+    }
+
+    public static void doUpdate() {
+        if (!isNeedUpdate()) {
+            MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("PLUGIN_CHACKUPDATE_NOTNEED"));
+            return;
+        }
+        new ChackPluginVersion().autoUpdatePlugin();
+        setNeedUpdate(false);
+    }
 
 
 

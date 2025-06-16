@@ -138,6 +138,8 @@ PLUGIN_CHACKUPDATE_FAILED: '§4업데이트 확인 실패, 네트워크를 확�
 PLUGIN_CHACKUPDATE_IN: '§a업데이트 확인 중...'
 PLUGIN_CHACKUPDATE_ED: '§aWkKit이 최신 버전입니다!'
 PLUGIN_CHACKUPDATE_BACKWARD: 'WkKit이 &c{num}&f 버전 뒤처져 있습니다!'
+PLUGIN_CHACKUPDATE_CONFIRM: "새 버전이 감지되었습니다. /wk update로 즉시 업데이트하세요!"
+PLUGIN_CHACKUPDATE_NOTNEED: "이미 최신 버전을 사용 중입니다. 업데이트가 필요하지 않습니다."
 LOG_MANAGE_ENABLE: '로그 관리가 활성화되었습니다. 모든 작업이 logs 폴더에 기록됩니다.'
 LOG_MANAGE_DISABLE: '로그 관리가 비활성화되었습니다.'
 LOG_MANAGE_SAVE: '로그가 logs 폴더에 저장되었습니다.'
@@ -151,3 +153,13 @@ LOG_MANAGE_IMPORT: '로그가 가져와졌습니다.'
 LOG_MANAGE_BACKUP: '로그가 백업되었습니다.'
 LOG_MANAGE_RESTORE: '로그가 복원되었습니다.'
 LOG_MANAGE_FAILED: '로그 작업에 실패했습니다.'
+PLUGIN_UPDATE_DOWNLOAD_SUCCESS: "새 버전이 다운로드되었습니다: "
+PLUGIN_UPDATE_RESTART_TIP: "플러그인 업데이트를 완료하려면 서버를 재시작하세요!"
+PLUGIN_UPDATE_PATH_NOTFOUND: "자동 업데이트 실패: 대상 파일 경로를 찾을 수 없습니다."
+PLUGIN_UPDATE_IO_ERROR: "자동 업데이트 실패: 다운로드 또는 파일 쓰기 오류."
+PLUGIN_UPDATE_RESTART_SUCCESS: "플러그인이 자동으로 재시작되었습니다!"
+PLUGIN_UPDATE_RESTART_FAIL: "재시작 시도 실패!"
+PLUGIN_UPDATE_DELETE_OLD_SUCCESS: "기존 플러그인 파일 삭제됨: "
+PLUGIN_UPDATE_DELETE_OLD_FAIL: "기존 플러그인 파일 삭제 실패: "
+PLUGIN_UPDATE_START: "새 버전이 감지되었습니다. 자동으로 업데이트를 다운로드 중..."
+PLUGIN_UPDATE_DELETE_OLD_ERROR: "기존 플러그인 파일 가져오기 또는 삭제 실패: "

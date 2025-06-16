@@ -215,6 +215,16 @@ public class KitCommand implements CommandExecutor{
 //			EditPlayer.selectPlayerGUI((Player)sender);
 //		}
 		
+		/*插件更新命令*/
+		if (args[0].equalsIgnoreCase("update") && sender.isOp()) {
+			if (cn.wekyjay.www.wkkit.tool.ChackPluginVersion.isNeedUpdate()) {
+				cn.wekyjay.www.wkkit.tool.ChackPluginVersion.doUpdate();
+			} else {
+				sender.sendMessage(cn.wekyjay.www.wkkit.config.LangConfigLoader.getStringWithPrefix("PLUGIN_CHACKUPDATE_NOTNEED", ChatColor.YELLOW));
+			}
+			return true;
+		}
+		
 		/*到底了*/
 		return true;
 	}

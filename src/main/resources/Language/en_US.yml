@@ -138,6 +138,18 @@ PLUGIN_CHACKUPDATE_FAILED: '§4Update failed, please check your network!'
 PLUGIN_CHACKUPDATE_IN: '§aChecking update is in progress...'
 PLUGIN_CHACKUPDATE_ED: '§aYour WkKit is the latest version!'
 PLUGIN_CHACKUPDATE_BACKWARD: 'Your WkKit is &c{num}&f versions behind!'
+PLUGIN_CHACKUPDATE_CONFIRM: "A new version is available! Type /wk update to update now."
+PLUGIN_CHACKUPDATE_NOTNEED: "You are already using the latest version. No update needed."
+PLUGIN_UPDATE_DOWNLOAD_SUCCESS: "The new plugin version has been downloaded to: "
+PLUGIN_UPDATE_RESTART_TIP: "Please restart the server to complete the plugin update!"
+PLUGIN_UPDATE_PATH_NOTFOUND: "Auto update failed: Target file path not found."
+PLUGIN_UPDATE_IO_ERROR: "Auto update failed: Download or file write error."
+PLUGIN_UPDATE_RESTART_SUCCESS: "Plugin has been automatically restarted!"
+PLUGIN_UPDATE_RESTART_FAIL: "Plugin restart attempt failed!"
+PLUGIN_UPDATE_DELETE_OLD_SUCCESS: "Old plugin file deleted: "
+PLUGIN_UPDATE_DELETE_OLD_FAIL: "Failed to delete old plugin file: "
+PLUGIN_UPDATE_START: "New version detected, downloading update..."
+PLUGIN_UPDATE_DELETE_OLD_ERROR: "Failed to get or delete old plugin file: "
 
 # Log Management
 LOG_MANAGE_ENABLE: 'Log management enabled, all operations will be recorded in the logs folder.'

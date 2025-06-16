@@ -138,6 +138,8 @@ PLUGIN_CHACKUPDATE_FAILED: '§4アップデート確認に失敗しました。�
 PLUGIN_CHACKUPDATE_IN: '§aアップデート確認中...'
 PLUGIN_CHACKUPDATE_ED: '§aWkKitは最新バージョンです！'
 PLUGIN_CHACKUPDATE_BACKWARD: 'WkKitは &c{num}&f バージョン遅れています！'
+PLUGIN_CHACKUPDATE_CONFIRM: "新しいバージョンが見つかりました。/wk update で今すぐ更新！"
+PLUGIN_CHACKUPDATE_NOTNEED: "すでに最新バージョンを使用しています。更新は不要です。"
 LOG_MANAGE_ENABLE: 'ログ管理が有効になりました。すべての操作はlogsフォルダーに記録されます。'
 LOG_MANAGE_DISABLE: 'ログ管理が無効になりました。'
 LOG_MANAGE_SAVE: 'ログがlogsフォルダーに保存されました。'
@@ -151,3 +153,13 @@ LOG_MANAGE_IMPORT: 'ログがインポートされました。'
 LOG_MANAGE_BACKUP: 'ログがバックアップされました。'
 LOG_MANAGE_RESTORE: 'ログが復元されました。'
 LOG_MANAGE_FAILED: 'ログ操作に失敗しました。'
+PLUGIN_UPDATE_DOWNLOAD_SUCCESS: "新しいバージョンがダウンロードされました："
+PLUGIN_UPDATE_RESTART_TIP: "サーバーを再起動してプラグインの更新を完了してください！"
+PLUGIN_UPDATE_PATH_NOTFOUND: "自動更新失敗：ターゲットファイルパスが見つかりません"
+PLUGIN_UPDATE_IO_ERROR: "自動更新失敗：ダウンロードまたはファイル書き込みエラー"
+PLUGIN_UPDATE_RESTART_SUCCESS: "プラグインが自動的に再起動されました！"
+PLUGIN_UPDATE_RESTART_FAIL: "再起動に失敗しました！"
+PLUGIN_UPDATE_DELETE_OLD_SUCCESS: "元のプラグインファイルを削除しました："
+PLUGIN_UPDATE_DELETE_OLD_FAIL: "元のプラグインファイルの削除に失敗しました："
+PLUGIN_UPDATE_START: "新しいバージョンが検出されました。自動でダウンロード中..."
+PLUGIN_UPDATE_DELETE_OLD_ERROR: "元のプラグインファイルの取得または削除に失敗しました："

@@ -15,7 +15,7 @@ public class TabCompleter implements TabExecutor{
 		if(!sender.isOp()) {
 			return Arrays.asList("mail","open","cdk","info","get");
 		}
-		List<String> list = Arrays.asList("create","cdk","delete","send","savecache","get","kits","give","info","open","mail","group","edit","transfer","reload");
+		List<String> list = Arrays.asList("create","cdk","delete","send","savecache","get","kits","give","info","open","mail","group","edit","transfer","update","reload");
 		List<String> savelist = new ArrayList<String>();
 		String firstcmd = args[0];
 		
@@ -46,7 +46,6 @@ public class TabCompleter implements TabExecutor{
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

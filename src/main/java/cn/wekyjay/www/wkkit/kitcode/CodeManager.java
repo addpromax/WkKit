@@ -2,6 +2,7 @@ package cn.wekyjay.www.wkkit.kitcode;
 
 import cn.wekyjay.www.wkkit.WkKit;
 import cn.wekyjay.www.wkkit.config.LangConfigLoader;
+import cn.wekyjay.www.wkkit.tool.MessageManager;
 import cn.wekyjay.www.wkkit.tool.WKTool;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class CodeManager {
 			password = sb.toString();
 			WkKit.getWkKit().getConfig().set("KitCode.Key", sb.toString());
 			WkKit.getWkKit().saveConfig();
-			WkKit.getWkKit().getLogger().info(LangConfigLoader.getString("AUTO_GENERATE_KEY"));
+			MessageManager.sendMessageWithPrefix(LangConfigLoader.getString("AUTO_GENERATE_KEY"));
 		}else {
 			password = value;
 		}
