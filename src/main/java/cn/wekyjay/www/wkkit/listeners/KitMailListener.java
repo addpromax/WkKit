@@ -52,20 +52,23 @@ public class KitMailListener implements Listener {
             }
             String name = e.getWhoClicked().getName();
             Player p = (Player) e.getWhoClicked();
+            Bukkit.getLogger().info("测试");
             // 判断是否能领取
             if (e.getRawSlot() >= 8 & e.getRawSlot() <= 44 && ItemEditer.hasWkKitTag(e.getCurrentItem()) && WKTool.hasSpace(p, 1)) {
                 p.getInventory().addItem(e.getCurrentItem());
                 String kitName = ItemEditer.getWkKitTagValue(e.getCurrentItem());
                 PlayersReceiveKitEvent event = new PlayersReceiveKitEvent(p, Kit.getKit(kitName), ReceiveType.MAIL);
                 Bukkit.getPluginManager().callEvent(event);
-                if (event.isCancelled())
-                    return;
+                Bukkit.getLogger().info("测试1");
+                if (event.isCancelled()) return;
                 WkKit.getPlayerData().delMailToFile(name, kitName);
                 p.closeInventory();
                 (new KitMail()).openKitMail(p, 1);
+                Bukkit.getLogger().info("测试2");
                 return;
             }
             List<String> set = WkKit.getPlayerData().getMailKits(name);
+            Bukkit.getLogger().info("测试3");
             // 如果大于一页则需要手动领取
             if (e.getInventory().firstEmpty() == -1 && e.getRawSlot() < 45 && e.getRawSlot() > 8 ){
                 p.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_GET_FAILED", ChatColor.YELLOW));

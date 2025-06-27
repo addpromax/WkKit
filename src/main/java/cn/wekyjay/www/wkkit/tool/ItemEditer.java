@@ -2,6 +2,7 @@ package cn.wekyjay.www.wkkit.tool;
 
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -99,7 +100,7 @@ public class ItemEditer {
 			return false;
 		} else {
 			// 低于1.20.5，直接查根节点
-			return nbt.hasTag("wkkit");
+			return nbt.getCompound("tag").hasTag("wkkit");
 		}
 	}
 
@@ -121,8 +122,8 @@ public class ItemEditer {
 			return null;
 		} else {
 			// 低于1.20.5
-			if (nbt.hasTag("wkkit")) {
-				return nbt.getString("wkkit");
+			if (nbt.getCompound("tag").hasTag("wkkit")) {
+				return nbt.getCompound("tag").getString("wkkit");
 			}
 			return null;
 		}
