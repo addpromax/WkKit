@@ -32,19 +32,7 @@ public class KitTransfer {
 						}
 					}
 				}
-				while(it.hasNext()) {
-					String playername = it.next().toString();
-					ConfigurationSection cs = WkKit.playerConfig.getConfigurationSection(playername);
-					for(String kitname : cs.getKeys(false)) {
-						int num = cs.getInt(kitname);
-						// 存在礼包就更新数据
-						if(WkKit.getPlayerData().contain_Mail(playername, kitname)) {
-							WkKit.getPlayerData().setMailNum(playername, kitname, num);
-						}else {//不存在就添加数据
-							WkKit.getPlayerData().setMailToFile(playername, kitname, num);
-						}
-					}
-				}
+				// 邮件数据迁移已废弃，邮件系统由 SweetMail 接管
 				sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_TRANSFER_SUCCESS", ChatColor.GREEN));
 			}
 		}else if(!WkKit.getWkKit().getConfig().getString("MySQL.Enable").equalsIgnoreCase("true")) {

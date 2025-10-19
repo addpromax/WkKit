@@ -2,7 +2,6 @@ package cn.wekyjay.www.wkkit.data.playerdata;
 
 import cn.wekyjay.www.wkkit.WkKit;
 import cn.wekyjay.www.wkkit.kit.Kit;
-import cn.wekyjay.www.wkkit.mysql.mailsqldata.MailSQLData;
 import cn.wekyjay.www.wkkit.mysql.playersqldata.PlayerSQLData;
 
 import java.util.List;
@@ -84,48 +83,4 @@ public class PlayerData_MySQL implements PlayerData{
 	public Boolean contain_Kit(String playername) {
 		return new PlayerSQLData().findPlayer(playername);
 	}
-
-	@Override
-	public void setMailToFile(String playername, String kitname, int num) {
-		new MailSQLData().insertData(playername, kitname, num);
-
-	}
-
-	@Override
-	public void delMailToFile(String playername, String kitname) {
-		new MailSQLData().deleteData(playername, kitname);
-
-	}
-
-	@Override
-	public void setMailNum(String playername, String kitname, int num) {
-		if(!contain_Mail(playername, kitname)) {//如果没有数据
-			setMailToFile(playername, kitname, num);
-		}else {
-			new MailSQLData().update_Num(playername, kitname, num);
-		}
-	}
-
-	@Override
-	public List<String> getMailKits(String playername) {
-		return new MailSQLData().findKitName(playername);
-	}
-
-	@Override
-	public Boolean contain_Mail(String playername, String kitname) {
-		List<String> list = WkKit.getPlayerData().getMailKits(playername);
-		if(list.contains(kitname)) {return true;}
-		return false;
-	}
-
-	@Override
-	public Boolean contain_Mail(String playername) {
-		return new MailSQLData().findPlayer(playername);
-	}
-
-	@Override
-	public Integer getMailKitNum(String playername, String kitname) {
-		return new MailSQLData().findKitNum(playername, kitname);
-	}
-
 }

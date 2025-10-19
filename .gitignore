@@ -111,3 +111,7 @@ buildNumber.properties
 
 # Common working directory
 run/
+
+# Reference code and libraries
+参考代码/
+libs/

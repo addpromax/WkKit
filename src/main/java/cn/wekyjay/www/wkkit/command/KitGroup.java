@@ -3,6 +3,7 @@ package cn.wekyjay.www.wkkit.command;
 import cn.wekyjay.www.wkkit.WkKit;
 import cn.wekyjay.www.wkkit.config.ConfigManager;
 import cn.wekyjay.www.wkkit.config.LangConfigLoader;
+import cn.wekyjay.www.wkkit.hook.SweetMailHooker;
 import cn.wekyjay.www.wkkit.kit.Kit;
 import cn.wekyjay.www.wkkit.kit.KitGroupManager;
 import org.bukkit.Bukkit;
@@ -50,9 +51,7 @@ public class KitGroup {
 							if(WkKit.getPlayerData().contain_Kit(pname,kitname)) {
 								WkKit.getPlayerData().delKitToFile(pname, kitname);
 							}
-							if(WkKit.getPlayerData().contain_Mail(pname,kitname)) {
-								WkKit.getPlayerData().delMailToFile(pname, kitname);;
-							}
+							// 邮件系统已由 SweetMail 接管
 						}
 						//保存配置
 						try {
@@ -116,17 +115,22 @@ public class KitGroup {
 			// 根据目标发放礼包
 			//发放实体礼包给：@all
 			if(target.equalsIgnoreCase("@All")) {
+				if(SweetMailHooker.getInstance() == null || !SweetMailHooker.isAvailable()) {
+					sender.sendMessage("§c邮件系统未启用，无法发送礼包组！请联系管理员安装 SweetMail 插件。");
+					return;
+				}
 				OfflinePlayer[] playerlist = Bukkit.getOfflinePlayers();
 				for(OfflinePlayer player : playerlist) {
-					String pname = player.getName();
-
-					for(Kit kit : kits) {
-						String kitname = kit.getKitname();
-						if(WkKit.getPlayerData().contain_Mail(pname,kitname)) {
-							int num = WkKit.getPlayerData().getMailKitNum(pname, kitname);
-							WkKit.getPlayerData().setMailNum(pname, kitname, num + kitnum);
-						}else {
-							WkKit.getPlayerData().setMailNum(pname, kitname, kitnum);
+					if(player.getPlayer() != null) {
+						for(Kit kit : kits) {
+							for(int i = 0; i < kitnum; i++) {
+								SweetMailHooker.getInstance().sendKitMail(
+									player.getPlayer(),
+									kit,
+									LangConfigLoader.getString("KIT_MAIL_TITLE"),
+									LangConfigLoader.getString("KIT_SEND_PICKUP")
+								);
+							}
 						}
 					}
 				}
@@ -135,17 +139,21 @@ public class KitGroup {
 			}
 			//发放礼包给：@online
 			if(target.equalsIgnoreCase("@Online")) {
+				if(SweetMailHooker.getInstance() == null || !SweetMailHooker.isAvailable()) {
+					sender.sendMessage("§c邮件系统未启用，无法发送礼包组！请联系管理员安装 SweetMail 插件。");
+					return;
+				}
 				OfflinePlayer[] playerlist = Bukkit.getOfflinePlayers();
 				for(OfflinePlayer player : playerlist) {
-					String pname = player.getName();
-					if(player.isOnline()) {//判断是否在线
+					if(player.isOnline() && player.getPlayer() != null) {
 						for(Kit kit : kits) {
-							String kitname = kit.getKitname();
-							if(WkKit.getPlayerData().contain_Mail(pname,kitname)) {
-								int num = WkKit.getPlayerData().getMailKitNum(pname, kitname);
-								WkKit.getPlayerData().setMailNum(pname, kitname, num + kitnum);
-							}else {
-								WkKit.getPlayerData().setMailNum(pname, kitname, kitnum);
+							for(int i = 0; i < kitnum; i++) {
+								SweetMailHooker.getInstance().sendKitMail(
+									player.getPlayer(),
+									kit,
+									LangConfigLoader.getString("KIT_MAIL_TITLE"),
+									LangConfigLoader.getString("KIT_SEND_PICKUP")
+								);
 							}
 						}
 					}
@@ -156,41 +164,46 @@ public class KitGroup {
 			
 			// 发放礼包给自己
 			if(target.equalsIgnoreCase("@Me") && sender instanceof Player) {
-				String pname = sender.getName();
-				for(Kit kit : kits) {
-					String kitname = kit.getKitname();
-					if(WkKit.getPlayerData().contain_Mail(pname,kitname)) {
-						int num = WkKit.getPlayerData().getMailKitNum(pname, kitname);
-						WkKit.getPlayerData().setMailNum(pname, kitname, num + kitnum);
-					}else {
-						WkKit.getPlayerData().setMailNum(pname, kitname, kitnum);
+				if(SweetMailHooker.getInstance() != null && SweetMailHooker.isAvailable()) {
+					for(Kit kit : kits) {
+						for(int i = 0; i < kitnum; i++) {
+							SweetMailHooker.getInstance().sendKitMail(
+								(Player)sender,
+								kit,
+								LangConfigLoader.getString("KIT_MAIL_TITLE"),
+								LangConfigLoader.getString("KIT_SEND_PICKUP")
+							);
+						}
 					}
+					sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_SEND_PLAYER", ChatColor.GREEN));
+				} else {
+					sender.sendMessage("§c邮件系统未启用，无法发送礼包组！请联系管理员安装 SweetMail 插件。");
 				}
-				sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_SEND_PLAYER", ChatColor.GREEN));
 				return;
 			}
 			
 			//发放礼包给：player
 			if(!target.equalsIgnoreCase("@All") && !target.equalsIgnoreCase("@Online")) {
 				String pname = target;
-				Boolean flag = false;
-				for(OfflinePlayer offlineplayer : Bukkit.getOfflinePlayers()) {
-					if(offlineplayer.getName().equals(pname)) {
-						flag = true;
-						break;
-					}
+				Player targetPlayer = Bukkit.getPlayer(pname);
+				if(SweetMailHooker.getInstance() == null || !SweetMailHooker.isAvailable()) {
+					sender.sendMessage("§c邮件系统未启用，无法发送礼包组！请联系管理员安装 SweetMail 插件。");
+					return;
 				}
-				if(flag == true) {
+				if(targetPlayer != null) {
 					for(Kit kit : kits) {
-						String kitname = kit.getKitname();
-						if(WkKit.getPlayerData().contain_Mail(pname,kitname)) {
-							int num = WkKit.getPlayerData().getMailKitNum(pname, kitname);
-							WkKit.getPlayerData().setMailNum(pname, kitname, num + kitnum);
-						}else {
-							WkKit.getPlayerData().setMailNum(pname, kitname, kitnum);
+						for(int i = 0; i < kitnum; i++) {
+							SweetMailHooker.getInstance().sendKitMail(
+								targetPlayer,
+								kit,
+								LangConfigLoader.getString("KIT_MAIL_TITLE"),
+								LangConfigLoader.getString("KIT_SEND_PICKUP")
+							);
 						}
 					}
 					sender.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_SEND_PLAYER", ChatColor.GREEN));
+				} else {
+					sender.sendMessage(LangConfigLoader.getStringWithPrefix("NO_PLAYER", ChatColor.RED));
 				}
 			}
 		}

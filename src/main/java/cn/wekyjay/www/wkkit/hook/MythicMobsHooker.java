@@ -1,10 +1,9 @@
 package cn.wekyjay.www.wkkit.hook;
 
 import cn.wekyjay.www.wkkit.WkKit;
-import io.lumine.xikage.mythicmobs.MythicMobs;
-import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter;
-import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
-import io.lumine.xikage.mythicmobs.mobs.MythicMob;
+import io.lumine.mythic.api.MythicProvider;
+import io.lumine.mythic.bukkit.BukkitAdapter;
+import io.lumine.mythic.core.mobs.ActiveMob;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -30,15 +29,20 @@ public class MythicMobsHooker {
      * @return 布尔值(是否生成成功)
      */
     public boolean spawnMob(Player player, String mobName){
-
-        MythicMob mob = MythicMobs.inst().getMobManager().getMythicMob(mobName);
-        Location spawnLocation = player.getLocation();
-        if(mob != null){
+        try {
+            io.lumine.mythic.api.mobs.MobManager mobManager = MythicProvider.get().getMobManager();
+            Location spawnLocation = player.getLocation();
             // 生成Mob
-            ActiveMob activeMob = mob.spawn(BukkitAdapter.adapt(spawnLocation),1);
-            // 将mob转化为bukkit生物
-            Entity entity = activeMob.getEntity().getBukkitEntity();
-            return true;
+            ActiveMob activeMob = mobManager.getMythicMob(mobName)
+                    .map(mob -> mob.spawn(BukkitAdapter.adapt(spawnLocation), 1))
+                    .orElse(null);
+            if (activeMob != null) {
+                // 将mob转化为bukkit生物
+                Entity entity = activeMob.getEntity().getBukkitEntity();
+                return true;
+            }
+        } catch (Exception e) {
+            WkKit.getWkKit().getLogger().warning("生成MythicMobs怪物失败: " + e.getMessage());
         }
         return false;
     }

@@ -4,6 +4,7 @@ import cn.wekyjay.www.wkkit.WkKit;
 import cn.wekyjay.www.wkkit.api.PlayersReceiveKitEvent;
 import cn.wekyjay.www.wkkit.api.ReceiveType;
 import cn.wekyjay.www.wkkit.config.LangConfigLoader;
+import cn.wekyjay.www.wkkit.hook.SweetMailHooker;
 import cn.wekyjay.www.wkkit.kit.Kit;
 import cn.wekyjay.www.wkkit.kit.KitGetter;
 import cn.wekyjay.www.wkkit.tool.WKTool;
@@ -118,16 +119,28 @@ public class KitGive {
 	}
 
 	/**
-	 * 	发送礼包至邮箱
+	 * 	发送礼包至邮箱 (使用 SweetMail)
 	 * @param player_name
 	 * @param kit
 	 */
 	private void sendToMail(String player_name,Kit kit){
-		if(WkKit.getPlayerData().contain_Mail(player_name,kit.getKitname())) {
-			int num = WkKit.getPlayerData().getMailKitNum(player_name, kit.getKitname());
-			WkKit.getPlayerData().setMailNum(player_name, kit.getKitname(), num + 1);
-		}else {
-			WkKit.getPlayerData().setMailNum(player_name, kit.getKitname(), 1);
+		// 使用 SweetMail 发送礼包
+		if(SweetMailHooker.getInstance() != null && SweetMailHooker.isAvailable()) {
+			Player targetPlayer = Bukkit.getPlayer(player_name);
+			if(targetPlayer != null) {
+				SweetMailHooker.getInstance().sendKitMail(
+					targetPlayer,
+					kit,
+					LangConfigLoader.getString("KIT_MAIL_TITLE"),
+					LangConfigLoader.getString("KIT_SEND_PICKUP")
+				);
+			}
+		} else {
+			// 邮件系统未启用时的提示
+			Player targetPlayer = Bukkit.getPlayer(player_name);
+			if(targetPlayer != null && targetPlayer.isOnline()) {
+				targetPlayer.sendMessage("§c背包已满，但邮件系统未启用！礼包无法发送，请清理背包后重试。");
+			}
 		}
 	}
 }

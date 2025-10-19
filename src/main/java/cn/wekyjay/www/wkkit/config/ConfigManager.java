@@ -36,7 +36,7 @@ public class ConfigManager {
 		WkKit.getWkKit().reloadConfig(); // 重载配置
 		if(WkKit.getWkKit().getConfig().getBoolean("MySQL.Enable") == true) MySQLManager.get().enableMySQL();
 		WkKit.playerConfig = YamlConfiguration.loadConfiguration(WkKit.playerConfigFile);
-		WkKit.playerMailConfig = YamlConfiguration.loadConfiguration(WkKit.playerMailConfigFile);
+		// 邮件系统已由 SweetMail 接管，无需加载 playerMailConfig
 		LangConfigLoader.reloadConfig();
 		ConfigManager.reloadKit();
 		ConfigManager.reloadMenu();

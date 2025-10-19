@@ -1,33 +1,19 @@
 package cn.wekyjay.www.wkkit.listeners;
 
-import cn.wekyjay.www.wkkit.WkKit;
-import cn.wekyjay.www.wkkit.config.LangConfigLoader;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
  * 礼包邮箱登录提醒领取
+ * 已由 SweetMail 插件接管邮件系统
  * @author WekyJay
  *
  */
 public class KitReminderListener implements Listener{
 	@EventHandler
 	public void whenPlayerOnline(PlayerJoinEvent e) {
-		if(WkKit.getWkKit().getConfig().getBoolean("Setting.OnlineReminder") == false) return;
-
-		Player player = e.getPlayer();
-		int kitnum = 0;
-		if(player == null) return;
-		if(WkKit.getPlayerData().contain_Mail(player.getName())) {
-			// 遍历礼包数据
-			for(String kitname : WkKit.getPlayerData().getMailKits(player.getName())) {
-				kitnum += WkKit.getPlayerData().getMailKitNum(player.getName(), kitname);
-			}
-		}
-		if(kitnum <= 0) return;
-		player.sendMessage(LangConfigLoader.getStringWithPrefix("KIT_MAIL_REMINDER", ChatColor.YELLOW));
+		// 邮件提醒功能已由 SweetMail 插件接管
+		// 请使用 SweetMail 的配置来管理邮件提醒功能
 	}
 }

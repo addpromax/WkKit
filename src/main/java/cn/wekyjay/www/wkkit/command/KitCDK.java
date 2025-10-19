@@ -2,6 +2,7 @@ package cn.wekyjay.www.wkkit.command;
 
 import cn.wekyjay.www.wkkit.WkKit;
 import cn.wekyjay.www.wkkit.config.LangConfigLoader;
+import cn.wekyjay.www.wkkit.hook.SweetMailHooker;
 import cn.wekyjay.www.wkkit.kit.Kit;
 import cn.wekyjay.www.wkkit.kitcode.CodeManager;
 import cn.wekyjay.www.wkkit.tool.WKTool;
@@ -98,17 +99,20 @@ public class KitCDK {
 						player.getInventory().addItem(Kit.getKit(kit).getKitItem());
 					}
 					player.sendMessage(LangConfigLoader.getString("CDK_EXCHANGE_SUCCESS"));
-				}else {//否则发送到礼包邮箱
-					for(String kitname : kitlist) {
-						if(WkKit.getPlayerData().contain_Mail(player.getName(),kitname)) {
-							int num = WkKit.getPlayerData().getMailKitNum(player.getName(), kitname);
-							WkKit.getPlayerData().setMailNum(player.getName(), kitname, num + 1);
-						}else {
-							WkKit.getPlayerData().setMailNum(player.getName(), kitname, 1);
+				}else {//否则发送到礼包邮箱 (使用 SweetMail)
+					if(SweetMailHooker.getInstance() != null && SweetMailHooker.isAvailable()) {
+						for(String kitname : kitlist) {
+							SweetMailHooker.getInstance().sendKitMail(
+								player,
+								Kit.getKit(kitname),
+								LangConfigLoader.getString("KIT_MAIL_TITLE"),
+								LangConfigLoader.getString("CDK_EXCHANGE_SUCCESS_TOMAIL")
+							);
 						}
-
+						player.sendMessage(LangConfigLoader.getString("CDK_EXCHANGE_SUCCESS_TOMAIL"));
+					} else {
+						player.sendMessage("§c背包已满，但邮件系统未启用！礼包无法发送，请清理背包后重新兑换。");
 					}
-					player.sendMessage(LangConfigLoader.getString("CDK_EXCHANGE_SUCCESS_TOMAIL"));
 				}
 				WkKit.getCdkData().setCDKStatus(CDK, player.getName());
 				return;

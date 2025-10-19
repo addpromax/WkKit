@@ -51,16 +51,10 @@ public class PapiHooker extends PlaceholderExpansion {
     	if(params.equalsIgnoreCase("servermenus")) {
     		return MenuManager.getMenus().size() + "";
     	}
-        //玩家礼包邮箱的总礼包数量
+        //玩家礼包邮箱的总礼包数量 (已由 SweetMail 接管)
         if(params.equalsIgnoreCase("kitmail")) {
-        	int kitnum = 0;
-        	List<String> kits = WkKit.getPlayerData().getMailKits(player.getName());
-        	if(kits != null) {
-            	for(String kitname : kits) {
-            		kitnum += WkKit.getPlayerData().getMailKitNum(playername, kitname);
-            	}
-            	return kitnum + "";
-        	}
+        	// 邮件系统已由 SweetMail 接管
+        	// 请使用 SweetMail 的占位符来获取邮件数量
         	return "0";
         }
         // 指定礼包的信息

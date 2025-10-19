@@ -17,6 +17,7 @@ import cn.wekyjay.www.wkkit.edit.EditKit;
 import cn.wekyjay.www.wkkit.hook.Metrics;
 import cn.wekyjay.www.wkkit.hook.MythicMobsHooker;
 import cn.wekyjay.www.wkkit.hook.PapiHooker;
+import cn.wekyjay.www.wkkit.hook.SweetMailHooker;
 import cn.wekyjay.www.wkkit.hook.VaultHooker;
 import cn.wekyjay.www.wkkit.kit.Kit;
 import cn.wekyjay.www.wkkit.kitcode.CodeManager;
@@ -39,14 +40,12 @@ public class WkKit extends JavaPlugin {
 
     /*声明静态属性*/
     public static File playerConfigFile;
-    public static File playerMailConfigFile;
     public static File CDKConfigFile;
     public static File msgConfigFile;
     public static File menuFile;
     public static File kitFile;
     public static File langFile;
     public static FileConfiguration playerConfig;
-    public static FileConfiguration playerMailConfig;
     public static FileConfiguration CDKConfig;
     private static PlayerData playerdata = null;
     private static CdkData cdkdata = null;
@@ -87,18 +86,15 @@ public class WkKit extends JavaPlugin {
 
         //创建文件
         playerConfigFile = new File(getDataFolder(),"player.yml");
-        playerMailConfigFile = new File(getDataFolder(),"maildata.yml");
         CDKConfigFile = new File(getDataFolder(),"CDK.yml");
 
 
         //检测是否存在不存在就创建一个
         if(!playerConfigFile.exists()) {saveResource("player.yml", false);}
-        if(!playerMailConfigFile.exists()) {saveResource("maildata.yml", false);}
         if(!CDKConfigFile.exists()) {saveResource("CDK.yml", false);}
 
         //加载文件
         playerConfig = YamlConfiguration.loadConfiguration(WkKit.playerConfigFile);
-        playerMailConfig = YamlConfiguration.loadConfiguration(WkKit.playerMailConfigFile);
         CDKConfig = YamlConfiguration.loadConfiguration(WkKit.CDKConfigFile);
 
 
@@ -137,7 +133,6 @@ public class WkKit extends JavaPlugin {
         //指令&监听注册
         Bukkit.getPluginCommand("wkkit").setExecutor(new KitCommand());//注册指令
         Bukkit.getPluginCommand("wkkit").setTabCompleter(new TabCompleter());//补全指令
-        Bukkit.getPluginManager().registerEvents(new KitMailListener(),this);
         Bukkit.getPluginManager().registerEvents(new DropKitListener(),this);
         Bukkit.getPluginManager().registerEvents(new NewComerListener(),this);
         Bukkit.getPluginManager().registerEvents(new KitReminderListener(),this);
@@ -172,14 +167,20 @@ public class WkKit extends JavaPlugin {
             new MythicMobsHooker();
         }
 
+        if(Bukkit.getPluginManager().getPlugin("SweetMail") != null){
+            new SweetMailHooker();
+            MessageManager.sendMessageWithPrefix("§a已检测到 SweetMail 插件，邮件系统已启用！");
+        } else {
+            MessageManager.sendMessageWithPrefix("§e未检测到 SweetMail 插件，邮件系统已禁用！");
+            MessageManager.sendMessageWithPrefix("§e如需使用邮件功能，请安装 SweetMail 插件。");
+        }
+
         //bStats
         int pluginId = 13579;
         new Metrics(this, pluginId);
 
-        //Check Version
-        if(getConfig().contains("Setting.CheckUpdate") && getConfig().getBoolean("Setting.CheckUpdate")) {
-            HandySchedulerUtil.runTaskAsynchronously(ChackPluginVersion::new);
-        }
+        //Check Version - Disabled in fork version
+        // 已在 fork 版本中禁用自动更新检测功能
 
         // 启动数据库
         if(Objects.requireNonNull(WkKit.wkkit.getConfig().getString("MySQL.Enable")).equalsIgnoreCase("true")) {

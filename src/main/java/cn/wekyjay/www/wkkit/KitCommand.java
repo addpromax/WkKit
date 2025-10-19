@@ -40,7 +40,6 @@ public class KitCommand implements CommandExecutor{
 				sender.sendMessage(LangConfigLoader.getString("Commands.savecache"));
 				sender.sendMessage(LangConfigLoader.getString("Commands.create"));
 				sender.sendMessage(LangConfigLoader.getString("Commands.delete"));
-				sender.sendMessage(LangConfigLoader.getString("Commands.mail"));
 				sender.sendMessage(LangConfigLoader.getString("Commands.info"));
 				sender.sendMessage(LangConfigLoader.getString("Commands.kits"));
 				sender.sendMessage(LangConfigLoader.getString("Commands.send"));
@@ -61,7 +60,6 @@ public class KitCommand implements CommandExecutor{
 			}
 			else if(!sender.isOp() && args[0].equalsIgnoreCase("help")){
 				sender.sendMessage("§a━━━━━━━━━━━━ WkKit Command ━━━━━━━━━━━━");
-				sender.sendMessage(LangConfigLoader.getString("Commands.mail"));
 				sender.sendMessage(LangConfigLoader.getString("Commands.open"));
 				sender.sendMessage(LangConfigLoader.getString("Commands.get"));
 				sender.sendMessage(LangConfigLoader.getString("Commands.cdk_verify"));
@@ -78,12 +76,6 @@ public class KitCommand implements CommandExecutor{
 	        sender.sendMessage(LangConfigLoader.getStringWithPrefix("MENU_NUM",ChatColor.GRAY) + MenuManager.getInvs().size());
 			sender.sendMessage(LangConfigLoader.getStringWithPrefix("CONFIG_RELOAD",ChatColor.GREEN));
 		    return true;
-		}
-		
-		/*打开邮箱*/
-		if(args[0].equalsIgnoreCase("mail") && sender.hasPermission("wkkit.mail") && sender instanceof Player) {
-			new KitMail().onCommand(sender, command, label, args);
-			return true;
 		}
 		
 		/*发放礼包*/
@@ -214,16 +206,6 @@ public class KitCommand implements CommandExecutor{
 //		if(args.length >= 1 && args[0].equalsIgnoreCase("head") && sender.isOp()) {
 //			EditPlayer.selectPlayerGUI((Player)sender);
 //		}
-		
-		/*插件更新命令*/
-		if (args[0].equalsIgnoreCase("update") && sender.isOp()) {
-			if (cn.wekyjay.www.wkkit.tool.ChackPluginVersion.isNeedUpdate()) {
-				cn.wekyjay.www.wkkit.tool.ChackPluginVersion.doUpdate();
-			} else {
-				sender.sendMessage(cn.wekyjay.www.wkkit.config.LangConfigLoader.getStringWithPrefix("PLUGIN_CHACKUPDATE_NOTNEED", ChatColor.YELLOW));
-			}
-			return true;
-		}
 		
 		/*到底了*/
 		return true;

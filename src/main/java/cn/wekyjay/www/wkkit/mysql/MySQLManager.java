@@ -3,7 +3,6 @@ package cn.wekyjay.www.wkkit.mysql;
 import cn.wekyjay.www.wkkit.WkKit;
 import cn.wekyjay.www.wkkit.config.LangConfigLoader;
 import cn.wekyjay.www.wkkit.mysql.cdksqldata.CdkSQLData;
-import cn.wekyjay.www.wkkit.mysql.mailsqldata.MailSQLData;
 import cn.wekyjay.www.wkkit.mysql.playersqldata.PlayerSQLData;
 import cn.wekyjay.www.wkkit.tool.Druid;
 import org.bukkit.ChatColor;
@@ -56,7 +55,6 @@ public class MySQLManager {
 		// 连接数据库
 		connectMySQL();
 		// 创建表
-		MailSQLData.createTable();
 		PlayerSQLData.createTable();
 		CdkSQLData.createTable();
 	}

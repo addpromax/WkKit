@@ -32,9 +32,7 @@ public class KitDelete {
 				if(WkKit.getPlayerData().contain_Kit(pname,kitname)) {
 					WkKit.getPlayerData().delKitToFile(pname, kitname);
 				}
-				if(WkKit.getPlayerData().contain_Mail(pname,kitname)) {
-					WkKit.getPlayerData().delMailToFile(pname, kitname);;
-				}
+				// 邮件系统已由 SweetMail 接管，无需删除邮件数据
 			}
 
 			//保存配置
